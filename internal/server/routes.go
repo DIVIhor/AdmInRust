@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -10,9 +11,29 @@ import (
 	"github.com/go-chi/cors"
 )
 
+const templateDir = "templates/"
+
+var templatePaths = getTemplatePaths(
+	"blocks/footer", "blocks/header", "blocks/sidebar",
+	"base", "add_origin", "origin", "origins",
+)
+
+// Parsing files at app initialization to avoid reading files on each request
+var templates = template.Must(template.ParseFiles(templatePaths...))
+
+// DRYing template paths
+func getTemplatePaths(templateNames ...string) (paths []string) {
+	paths = make([]string, len(templateNames))
+	for idx, tmpltName := range templateNames {
+		paths[idx] = templateDir + tmpltName + ".html"
+	}
+	return paths
+}
+
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -22,11 +43,38 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	r.Get("/", s.HelloWorldHandler)
+	r.Get("/", s.mainHandler) //s.HelloWorldHandler)
+
+	// origin-related routes
+	// handles getting origins and specific origin, adding origin form and post,
+	r.Route("/origins", func(r chi.Router) {
+		r.Get("/", s.getOrigins)
+
+		r.Get("/add", s.addOriginForm)
+		r.Post("/add", s.addOrigin)
+
+		r.Route("/{originId:[0-9]+}", func(r chi.Router) {
+			r.Get("/", s.getOrigin)
+			// r.Put("/", s.updateOrigin)
+			r.Delete("/", s.deleteOrigin)
+		})
+	})
 
 	r.Get("/health", s.healthHandler)
 
 	return r
+}
+
+type Page struct {
+	Title   string
+	Content any
+}
+
+func (s *Server) mainHandler(w http.ResponseWriter, r *http.Request) {
+	err := templates.ExecuteTemplate(w, "base.html", "")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
