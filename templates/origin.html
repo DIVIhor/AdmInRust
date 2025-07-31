@@ -1,0 +1,44 @@
+<h1>{{ .Title }}</h1>
+
+<!-- perhaps move script to additional block for further reuse -->
+<script>
+    function deleteOrigin(originId) {
+        // Send DELETE request using fetch
+        fetch('/origins/' + originId, {
+            method: 'DELETE',  // Set the HTTP method to DELETE
+            headers: {
+                'Content-Type': 'application/json',  // Optional: Set content type for JSON request
+            },
+        })
+        .then(response => {
+            if (response.status === 204) {  // check response from the backend
+                    // Redirect the user to the new location (from the Location header)
+                    window.location.href = response.headers.get('redirectPathgit');
+                } else {
+                    alert("Failed to delete the entry.");
+                }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("There was an error deleting the origin.");
+        });
+    }
+</script>
+
+<a href="/origins">back to Origins</a>
+
+<h2>Origin Details</h2>
+<ul>
+    <li><span>Added at: {{ .Content.CreatedAt }}</span></li>
+    <li><span>Last update: {{ .Content.UpdatedAt }}</span></li>
+    <li><a href="{{ .Content.Url }}">Visit</a></li>
+    <li><a href="{{ .Content.Url }}{{ .Content.PathToPluginList }}">Plugins page</a></li>
+    <li>
+        <label>
+            <input type="checkbox" name="has api" {{ if .Content.HasApi }}checked{{ end }} disabled>
+            <span>Has API</span>
+        </label>
+    </li>
+</ul>
+
+<button onclick="deleteOrigin('{{ .Content.ID }}')">Delete Origin</button>

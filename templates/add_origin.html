@@ -1,0 +1,27 @@
+{{ define "content" }}
+<div class="h-screen w-screen flex items-center justify-center">
+    <form class="p-8 rounded-lg shadow-md w-full max-w-sm" method="post">
+        <h1>Add new Plugin Origin</h1>
+        <div class="relative h-11 w-full min-w-[200px]">
+            <input type="text" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" name="name" id="" placeholder="Name" pattern="[a-zA-Z0-9]{3,}$" required>
+        </div>
+        <div class="relative h-11 w-full min-w-[200px]">
+            <input type="url" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" name="url" id="" placeholder="URL" pattern="^https://[a-zA-Z0-9]+.[a-z]{1,5}$" required>
+        </div>
+        <div class="relative h-11 w-full min-w-[200px]">
+            <input type="text" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" name="pathToPluginList" id="" placeholder="URL path to plugin list" pattern="^/[a-zA-Z0-9/%?=&_-]+$" required>
+        </div>
+        <label class="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
+            <input type="checkbox" class="peer hidden" name="hasApi" value="yes">
+            <div class="h-5 w-5 flex rounded-md border border-[#a2a1a833] light:bg-[#e8e8e8] dark:bg-[#212121] peer-checked:bg-[#7152f3] transition">
+                <svg fill="none" viewBox="0 0 24 24" class="w-5 h-5 light:stroke-[#e8e8e8] dark:stroke-[#212121]" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 12.6111L8.92308 17.5L20 6.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </div>
+            has API
+        </label>
+        <!-- <input type="submit" class="" value="submit"> -->
+        <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold p-2 mt-3 rounded w-[100%]">Submit</button>
+    </form>
+</div>
+{{ end }}

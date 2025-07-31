@@ -1,0 +1,53 @@
+{{ define "content" }}
+<div class="flex h-full">
+    <!-- Here should be left sidebar -->
+     {{ template "sidebar.html" }}
+
+    <!-- Right Content (Main Zone with Cards) -->
+    <div class="flex-1 p-4 grid grid-cols-4 gap-4">
+        {{ range . }}
+            <div class="bg-gray-600 rounded-lg shadow-lg w-full pb-[100%] relative overflow-hidden group" 
+                hx-get="/details" 
+                hx-target="#modal"
+                hx-trigger="click">
+            <!-- Translucent black stripe container for text only, with rounded corners -->
+            <div class="absolute inset-x-0 bottom-0 flex flex-col justify-end bg-black bg-opacity-50 p-4 rounded-b-lg z-10 transition-all group-hover:h-full group-hover:pb-4">
+                <h3 class="text-lg font-semibold text-white transition-all group-hover:translate-y-[-2rem]">{{ .Name }}</h3>
+                <p class="text-gray-300 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all">{{ .Description }}</p>
+            </div>
+            <!-- Background image (adjust this later with real image) -->
+            <img src="{{ .Img }}" alt="{{ .Name }}" class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+        </div>
+        {{ end }}
+    </div>
+</div>
+
+<!-- Modal (Pop-up window for card details) -->
+<div id="modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+    <div class="bg-gray-800 p-8 rounded-lg w-3/4">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-semibold">Card Details</h2>
+            <button class="text-white" onclick="document.getElementById('modal').classList.add('hidden')">X</button>
+        </div>
+        <!-- Tabs for info -->
+        <div class="mt-4 flex space-x-4">
+            <button class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-400">Tab 1</button>
+            <button class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-400">Tab 2</button>
+            <button class="px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-400">Tab 3</button>
+        </div>
+        <!-- Content for Tabs (Placeholder) -->
+        <div class="mt-6">
+            <p class="text-gray-400">Detailed information about the card goes here...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Open modal when a card is clicked
+    document.querySelectorAll('[hx-get]').forEach(card => {
+        card.addEventListener('click', function() {
+            document.getElementById('modal').classList.remove('hidden');
+        });
+    });
+</script>
+{{ end }}
