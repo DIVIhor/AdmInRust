@@ -13,7 +13,7 @@
         .then(response => {
             if (response.status === 204) {  // check response from the backend
                     // Redirect the user to the new location (from the Location header)
-                    window.location.href = response.headers.get('redirectPathgit');
+                    window.location.href = response.headers.get('redirectPath');
                 } else {
                     alert("Failed to delete the entry.");
                 }
