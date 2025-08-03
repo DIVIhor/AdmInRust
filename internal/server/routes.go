@@ -46,19 +46,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/", s.mainHandler) //s.HelloWorldHandler)
 
 	// origin-related routes
-	// handles getting origins and specific origin, adding origin form and post,
-	r.Route("/origins", func(r chi.Router) {
-		r.Get("/", s.getOrigins)
-
-		r.Get("/add", s.addOriginForm)
-		r.Post("/add", s.addOrigin)
-
-		r.Route("/{originId:[0-9]+}", func(r chi.Router) {
-			r.Get("/", s.getOrigin)
-			// r.Put("/", s.updateOrigin)
-			r.Delete("/", s.deleteOrigin)
-		})
-	})
+	s.registerOriginRoutes(r)
 
 	r.Get("/health", s.healthHandler)
 
@@ -68,6 +56,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 type Page struct {
 	Title   string
 	Content any
+	// TODO add URL parameter
 }
 
 func (s *Server) mainHandler(w http.ResponseWriter, r *http.Request) {

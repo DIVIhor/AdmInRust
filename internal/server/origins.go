@@ -6,7 +6,25 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
+
+// Routes to get one/many, add, and delete origins
+func (s *Server) registerOriginRoutes(r *chi.Mux) {
+	r.Route("/origins", func(r chi.Router) {
+		r.Get("/", s.getOrigins)
+
+		r.Get("/add", s.addOriginForm)
+		r.Post("/add", s.addOrigin)
+
+		r.Route("/{originId:[0-9]+}", func(r chi.Router) {
+			r.Get("/", s.getOrigin)
+			// r.Put("/", s.updateOrigin)
+			r.Delete("/", s.deleteOrigin)
+		})
+	})
+}
 
 // Render a list of origins
 func (s *Server) getOrigins(w http.ResponseWriter, r *http.Request) {
@@ -100,9 +118,9 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 
 	hasAPI := r.FormValue("hasApi")
 	originParams := database.AddOriginParams{
-		Name:             r.FormValue("name"),
-		Url:              r.FormValue("url"),
-		PathToPluginList: r.FormValue("pathToPluginList"),
+		Name:             name,
+		Url:              url,
+		PathToPluginList: pathToPluginList,
 	}
 	if hasAPI == "yes" {
 		originParams.HasApi = 1
@@ -114,8 +132,6 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 		return
 	}
-
-	fmt.Println(origin) // delete this in future
 
 	http.Redirect(w, r, fmt.Sprintf("/origins/%d", origin.ID), http.StatusFound)
 }
