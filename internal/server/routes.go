@@ -14,8 +14,9 @@ import (
 const templateDir = "templates/"
 
 var templatePaths = getTemplatePaths(
-	"blocks/footer", "blocks/header", "blocks/sidebar",
-	"base", "add_origin", "origin", "origins",
+	"blocks/footer", "blocks/header", "blocks/sidebar", "base",
+	"add_origin", "origin", "origins",
+	"add_plugin", "plugin", "plugins",
 )
 
 // Parsing files at app initialization to avoid reading files on each request
@@ -48,6 +49,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// origin-related routes
 	s.registerOriginRoutes(r)
 
+	// plugin-related routes
+	s.registerPluginRoutes(r)
+
 	r.Get("/health", s.healthHandler)
 
 	return r
@@ -56,6 +60,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 type Page struct {
 	Title   string
 	Content any
+	Meta    any
 	// TODO add URL parameter
 }
 
