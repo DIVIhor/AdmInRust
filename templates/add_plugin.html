@@ -1,0 +1,39 @@
+{{ define "content" }}
+<div class="h-screen w-screen flex items-center justify-center">
+    {{ if .Meta }}
+    <form class="p-8 rounded-lg shadow-md w-full max-w-sm" method="POST">
+        <h1>Add new Plugin</h1>
+        <div class="relative h-15 w-full min-w-[200px]">
+            <input type="text" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" name="name" id="" placeholder="Name" pattern="[\w ]{3,}$" required>
+        </div>
+        <div class="relative h-15 w-full min-w-[200px]">
+            <input type="text" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" name="description" id="" placeholder="Description">
+        </div>
+        <div class="relative h-15 w-full min-w-[200px]">
+            <input type="url" class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]" name="url" id="" placeholder="URL" pattern="^https://[a-zA-Z0-9]+.[a-z]{1,5}/([a-zA-Z0-9/%?=&_-]+)$" required>
+        </div>
+        <label class="text-sm mb-2 text-white-900 cursor-pointer" for="origin">
+        Origin
+        </label>
+        <select class="w-full bg-gray-800 rounded-md border-gray-700 text-white px-2 py-1" name="origin" id="origin">
+            {{ range .Meta.Origins}}
+            <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
+        </select>
+        <label class="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
+            <input type="checkbox" class="peer hidden" name="isUpdatedOnServer" value="yes">
+            <div class="h-5 w-5 flex rounded-md border border-[#a2a1a833] light:bg-[#e8e8e8] dark:bg-[#212121] peer-checked:bg-[#7152f3] transition">
+                <svg fill="none" viewBox="0 0 24 24" class="w-5 h-5 light:stroke-[#e8e8e8] dark:stroke-[#212121]" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 12.6111L8.92308 17.5L20 6.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </div>
+            is updated on server
+        </label>
+        <!-- <input type="submit" class="" value="submit"> -->
+        <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold p-2 mt-3 rounded w-[100%]">Submit</button>
+    </form>
+    {{ else }}
+    <h2>You should add at least one origin first</h2>
+    {{ end }}
+</div>
+{{ end }}

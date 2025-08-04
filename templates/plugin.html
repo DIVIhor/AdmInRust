@@ -1,0 +1,42 @@
+<h1>{{ .Title }}</h1>
+
+<!-- perhaps move script to additional block for further reuse -->
+<script>
+    function deletePlugin(pluginId) {
+        // Send DELETE request using fetch
+        fetch('/plugins/' + pluginId, {
+            method: 'DELETE',  // Set the HTTP method to DELETE
+            headers: {
+                'Content-Type': 'application/json',  // Optional: Set content type for JSON request
+            },
+        })
+        .then(response => {
+            if (response.status === 204) {  // check response from the backend
+                    // Redirect the user to the new location (from the Location header)
+                    window.location.href = response.headers.get('redirectPath');
+                } else {
+                    alert("Failed to delete the entry.");
+                }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("There was an error deleting the plugin.");
+        });
+    }
+</script>
+
+<a href="/plugins">back to Plugins</a>
+
+<h2>Plugin Details</h2>
+<ul>
+    <li><span>Added at: {{ .Content.CreatedAt }}</span></li>
+    <li><span>Last update: {{ .Content.UpdatedAt }}</span></li>
+    <li><a href="{{ .Content.Url }}">Visit</a></li>
+    <li>{{ .Content.OriginID }}</li>
+    {{ if .Content.Description }}
+        <li>Description: {{ .Content.Description }}</li>
+    {{ end }}
+    <li>{{ .Content.IsUpdatedOnServer }}</li>
+</ul>
+
+<button onclick="deletePlugin('{{ .Content.ID }}')">Delete Plugin</button>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+</head>
+<body>
+    <h1>Plugins</h1>
+    <a href="/plugins/add">Add Plugin</a>
+    {{ if .Content }}
+        <ol>
+            {{ range .Content }}
+            <li>
+                <ul>
+                    <li><h3><a href="/plugins/{{.ID}}">{{ .Name }}</a></h3></li>
+                    <li><span>{{ .Description }}</span></li>
+                    <li>{{ .IsUpdatedOnServer }}</li>
+                </ul>
+            </li>
+            {{ end }}
+        </ol>
+    {{ else}}
+        <h3>No plugins available</h3>
+    {{ end }}
+</body>
+</html>
