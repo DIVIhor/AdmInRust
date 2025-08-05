@@ -72,20 +72,25 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 
 // Render the page with adding plugin form
 func (s *Server) addPluginForm(w http.ResponseWriter, r *http.Request) {
+	page := Page{
+		Title: "Add Plugin",
+	}
+
 	origins, err := s.db.Queries().GetOrigins(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	meta := struct {
-		Origins []database.PluginOrigin
-	}{origins}
 
-	page := Page{
-		Title: "Add Plugin",
-		Meta:  meta,
+	if origins != nil {
+		meta := struct {
+			Origins []database.PluginOrigin
+		}{origins}
+
+		page.Meta = meta
 	}
-	err = templates.ExecuteTemplate(w, "base.html", page)
+
+	err = templates.ExecuteTemplate(w, "add_plugin.html", page)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
