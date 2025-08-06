@@ -14,4 +14,4 @@ CREATE TABLE plugin_manual_code_changes (
 );
 
 -- +goose Down
-DROP TABLE code_changes;
+DROP TABLE plugin_manual_code_changes;

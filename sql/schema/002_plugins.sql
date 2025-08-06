@@ -2,6 +2,7 @@
 CREATE TABLE plugins (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
     description TEXT NOT NULL,
     url TEXT NOT NULL,
     origin_id INTEGER NOT NULL,

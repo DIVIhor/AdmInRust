@@ -2,6 +2,7 @@
 CREATE TABLE plugin_origins (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
     url TEXT NOT NULL,
     path_to_plugin_list TEXT NOT NULL,
     has_api INTEGER DEFAULT 0 NOT NULL,
