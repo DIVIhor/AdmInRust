@@ -7,6 +7,7 @@ package database
 type Plugin struct {
 	ID                int64
 	Name              string
+	Slug              string
 	Description       string
 	Url               string
 	OriginID          int64
@@ -72,6 +73,7 @@ type PluginManualCodeChange struct {
 type PluginOrigin struct {
 	ID               int64
 	Name             string
+	Slug             string
 	Url              string
 	PathToPluginList string
 	HasApi           int64

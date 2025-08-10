@@ -10,13 +10,14 @@ import (
 )
 
 const addOrigin = `-- name: AddOrigin :one
-INSERT INTO plugin_origins(name, url, path_to_plugin_list, has_api, created_at, updated_at)
-VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
-RETURNING id, name, url, path_to_plugin_list, has_api, created_at, updated_at
+INSERT INTO plugin_origins(name, slug, url, path_to_plugin_list, has_api, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+RETURNING id, name, slug, url, path_to_plugin_list, has_api, created_at, updated_at
 `
 
 type AddOriginParams struct {
 	Name             string
+	Slug             string
 	Url              string
 	PathToPluginList string
 	HasApi           int64
@@ -25,6 +26,7 @@ type AddOriginParams struct {
 func (q *Queries) AddOrigin(ctx context.Context, arg AddOriginParams) (PluginOrigin, error) {
 	row := q.db.QueryRowContext(ctx, addOrigin,
 		arg.Name,
+		arg.Slug,
 		arg.Url,
 		arg.PathToPluginList,
 		arg.HasApi,
@@ -33,6 +35,7 @@ func (q *Queries) AddOrigin(ctx context.Context, arg AddOriginParams) (PluginOri
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Slug,
 		&i.Url,
 		&i.PathToPluginList,
 		&i.HasApi,
@@ -45,16 +48,17 @@ func (q *Queries) AddOrigin(ctx context.Context, arg AddOriginParams) (PluginOri
 const deleteOrigin = `-- name: DeleteOrigin :one
 DELETE
 FROM plugin_origins
-WHERE id = ?
-RETURNING id, name, url, path_to_plugin_list, has_api, created_at, updated_at
+WHERE slug = ?
+RETURNING id, name, slug, url, path_to_plugin_list, has_api, created_at, updated_at
 `
 
-func (q *Queries) DeleteOrigin(ctx context.Context, id int64) (PluginOrigin, error) {
-	row := q.db.QueryRowContext(ctx, deleteOrigin, id)
+func (q *Queries) DeleteOrigin(ctx context.Context, slug string) (PluginOrigin, error) {
+	row := q.db.QueryRowContext(ctx, deleteOrigin, slug)
 	var i PluginOrigin
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Slug,
 		&i.Url,
 		&i.PathToPluginList,
 		&i.HasApi,
@@ -65,17 +69,18 @@ func (q *Queries) DeleteOrigin(ctx context.Context, id int64) (PluginOrigin, err
 }
 
 const getOrigin = `-- name: GetOrigin :one
-SELECT id, name, url, path_to_plugin_list, has_api, created_at, updated_at
+SELECT id, name, slug, url, path_to_plugin_list, has_api, created_at, updated_at
 FROM plugin_origins
-WHERE id = ?
+WHERE slug = ?
 `
 
-func (q *Queries) GetOrigin(ctx context.Context, id int64) (PluginOrigin, error) {
-	row := q.db.QueryRowContext(ctx, getOrigin, id)
+func (q *Queries) GetOrigin(ctx context.Context, slug string) (PluginOrigin, error) {
+	row := q.db.QueryRowContext(ctx, getOrigin, slug)
 	var i PluginOrigin
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Slug,
 		&i.Url,
 		&i.PathToPluginList,
 		&i.HasApi,
@@ -86,7 +91,7 @@ func (q *Queries) GetOrigin(ctx context.Context, id int64) (PluginOrigin, error)
 }
 
 const getOrigins = `-- name: GetOrigins :many
-SELECT id, name, url, path_to_plugin_list, has_api, created_at, updated_at
+SELECT id, name, slug, url, path_to_plugin_list, has_api, created_at, updated_at
 FROM plugin_origins
 ORDER BY name
 `
@@ -103,6 +108,7 @@ func (q *Queries) GetOrigins(ctx context.Context) ([]PluginOrigin, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
+			&i.Slug,
 			&i.Url,
 			&i.PathToPluginList,
 			&i.HasApi,

@@ -13,7 +13,7 @@
             {{ range .Content }}
             <li>
                 <ul>
-                    <li><h3><a href="/plugins/{{.ID}}">{{ .Name }}</a></h3></li>
+                    <li><h3><a href="/plugins/{{.Slug}}">{{ .Name }}</a></h3></li>
                     <li><span>{{ .Description }}</span></li>
                     <li>{{ .IsUpdatedOnServer }}</li>
                 </ul>

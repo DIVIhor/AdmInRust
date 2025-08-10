@@ -10,13 +10,14 @@ import (
 )
 
 const addPlugin = `-- name: AddPlugin :one
-INSERT INTO plugins(name, description, url, origin_id, is_updated_on_server, created_at, updated_at)
-VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-RETURNING id, name, description, url, origin_id, is_updated_on_server, created_at, updated_at
+INSERT INTO plugins(name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at)
+VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+RETURNING id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
 `
 
 type AddPluginParams struct {
 	Name              string
+	Slug              string
 	Description       string
 	Url               string
 	OriginID          int64
@@ -26,6 +27,7 @@ type AddPluginParams struct {
 func (q *Queries) AddPlugin(ctx context.Context, arg AddPluginParams) (Plugin, error) {
 	row := q.db.QueryRowContext(ctx, addPlugin,
 		arg.Name,
+		arg.Slug,
 		arg.Description,
 		arg.Url,
 		arg.OriginID,
@@ -35,6 +37,7 @@ func (q *Queries) AddPlugin(ctx context.Context, arg AddPluginParams) (Plugin, e
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Slug,
 		&i.Description,
 		&i.Url,
 		&i.OriginID,
@@ -48,16 +51,17 @@ func (q *Queries) AddPlugin(ctx context.Context, arg AddPluginParams) (Plugin, e
 const deletePlugin = `-- name: DeletePlugin :one
 DELETE
 FROM plugins
-WHERE id = ?
-RETURNING id, name, description, url, origin_id, is_updated_on_server, created_at, updated_at
+WHERE slug = ?
+RETURNING id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
 `
 
-func (q *Queries) DeletePlugin(ctx context.Context, id int64) (Plugin, error) {
-	row := q.db.QueryRowContext(ctx, deletePlugin, id)
+func (q *Queries) DeletePlugin(ctx context.Context, slug string) (Plugin, error) {
+	row := q.db.QueryRowContext(ctx, deletePlugin, slug)
 	var i Plugin
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Slug,
 		&i.Description,
 		&i.Url,
 		&i.OriginID,
@@ -69,17 +73,18 @@ func (q *Queries) DeletePlugin(ctx context.Context, id int64) (Plugin, error) {
 }
 
 const getPlugin = `-- name: GetPlugin :one
-SELECT id, name, description, url, origin_id, is_updated_on_server, created_at, updated_at
+SELECT id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
 FROM plugins
-WHERE id = ?
+WHERE slug = ?
 `
 
-func (q *Queries) GetPlugin(ctx context.Context, id int64) (Plugin, error) {
-	row := q.db.QueryRowContext(ctx, getPlugin, id)
+func (q *Queries) GetPlugin(ctx context.Context, slug string) (Plugin, error) {
+	row := q.db.QueryRowContext(ctx, getPlugin, slug)
 	var i Plugin
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.Slug,
 		&i.Description,
 		&i.Url,
 		&i.OriginID,
@@ -91,7 +96,7 @@ func (q *Queries) GetPlugin(ctx context.Context, id int64) (Plugin, error) {
 }
 
 const getPlugins = `-- name: GetPlugins :many
-SELECT id, name, description, url, origin_id, is_updated_on_server, created_at, updated_at
+SELECT id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
 FROM plugins
 ORDER BY is_updated_on_server, updated_at, origin_id, name
 `
@@ -108,6 +113,7 @@ func (q *Queries) GetPlugins(ctx context.Context) ([]Plugin, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
+			&i.Slug,
 			&i.Description,
 			&i.Url,
 			&i.OriginID,

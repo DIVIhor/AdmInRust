@@ -3,9 +3,9 @@ package server
 import (
 	"adminrust/internal/database"
 	"fmt"
+	"log"
 	"net/http"
 	"regexp"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -18,7 +18,7 @@ func (s *Server) registerOriginRoutes(r *chi.Mux) {
 		r.Get("/add", s.addOriginForm)
 		r.Post("/add", s.addOrigin)
 
-		r.Route("/{originId:[0-9]+}", func(r chi.Router) {
+		r.Route("/{originSlug:[a-z0-9-]+}", func(r chi.Router) {
 			r.Get("/", s.getOrigin)
 			// r.Put("/", s.updateOrigin)
 			r.Delete("/", s.deleteOrigin)
@@ -30,6 +30,7 @@ func (s *Server) registerOriginRoutes(r *chi.Mux) {
 func (s *Server) getOrigins(w http.ResponseWriter, r *http.Request) {
 	origins, err := s.db.Queries().GetOrigins(r.Context())
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -41,20 +42,17 @@ func (s *Server) getOrigins(w http.ResponseWriter, r *http.Request) {
 
 	err = templates.ExecuteTemplate(w, "origins.html", page)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
 // Render a detailed page for a specific origin by its ID
 func (s *Server) getOrigin(w http.ResponseWriter, r *http.Request) {
-	originIdStr := r.PathValue("originId")
-	originId, err := strconv.Atoi(originIdStr)
+	originSlug := r.PathValue("originSlug")
+	origin, err := s.db.Queries().GetOrigin(r.Context(), originSlug)
 	if err != nil {
-		http.Error(w, "origin ID should be a number", http.StatusBadRequest)
-		return
-	}
-	origin, err := s.db.Queries().GetOrigin(r.Context(), int64(originId))
-	if err != nil {
+		log.Println("err")
 		http.Error(w, "page not found", http.StatusNotFound)
 		return
 	}
@@ -66,7 +64,8 @@ func (s *Server) getOrigin(w http.ResponseWriter, r *http.Request) {
 
 	err = templates.ExecuteTemplate(w, "origin.html", page)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
@@ -77,7 +76,8 @@ func (s *Server) addOriginForm(w http.ResponseWriter, r *http.Request) {
 	}
 	err := templates.ExecuteTemplate(w, "base.html", page)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
@@ -88,9 +88,11 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	// since plugin origins usually are uMod and Codefling,
 	// origin name shouldn't be less than 3 symbols long
 	name := r.FormValue("name")
-	if len(name) < 3 {
+	nameTemplate := regexp.MustCompile(`^[\w ]{3,}$`)
+	validName := nameTemplate.FindString(name)
+	if validName == "" {
+		log.Println("name error:", name)
 		http.Error(w, "Wrong name format", http.StatusBadRequest)
-		fmt.Println("name error", name)
 		return
 	}
 
@@ -99,8 +101,8 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9]+.[a-z]{1,5}$")
 	validUrl := urlTemplate.FindString(url)
 	if validUrl == "" {
+		log.Println("invalid URL:", url)
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
-		fmt.Println("invalid URL", url)
 		return
 	}
 
@@ -111,29 +113,31 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	pathTemplate := regexp.MustCompile("^/([a-zA-Z0-9/%?=&_-]+)$")
 	validPath := pathTemplate.FindString(pathToPluginList)
 	if validPath == "" {
+		log.Println("invalid path to plugins:", pathToPluginList)
 		http.Error(w, "Invalid path", http.StatusBadRequest)
-		fmt.Println("invalid path to plugins", pathToPluginList)
 		return
 	}
 
-	hasAPI := r.FormValue("hasApi")
+	slug := slugify(validName)
 	originParams := database.AddOriginParams{
-		Name:             name,
+		Name:             validName,
+		Slug:             slug,
 		Url:              url,
 		PathToPluginList: pathToPluginList,
 	}
+	hasAPI := r.FormValue("hasApi")
 	if hasAPI == "yes" {
 		originParams.HasApi = 1
 	}
 
 	origin, err := s.db.Queries().AddOrigin(r.Context(), originParams)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		fmt.Println(err.Error())
+		log.Println(err.Error())
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/origins/%d", origin.ID), http.StatusFound)
+	http.Redirect(w, r, fmt.Sprintf("/origins/%s", origin.Slug), http.StatusFound)
 }
 
 // Update origin details
@@ -143,15 +147,10 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 
 // Delete origin by its ID and redirect to the origin list page
 func (s *Server) deleteOrigin(w http.ResponseWriter, r *http.Request) {
-	originIdStr := r.PathValue("originId")
-	originId, err := strconv.Atoi(originIdStr)
+	originSlug := r.PathValue("originSlug")
+	_, err := s.db.Queries().DeleteOrigin(r.Context(), originSlug)
 	if err != nil {
-		http.Error(w, "origin ID should be a number", http.StatusBadRequest)
-		return
-	}
-
-	_, err = s.db.Queries().DeleteOrigin(r.Context(), int64(originId))
-	if err != nil {
+		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
