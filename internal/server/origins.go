@@ -40,7 +40,7 @@ func (s *Server) getOrigins(w http.ResponseWriter, r *http.Request) {
 		Content: origins,
 	}
 
-	err = templates.ExecuteTemplate(w, "origins.html", page)
+	err = templates["origins"].ExecuteTemplate(w, "base.html", page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -62,7 +62,7 @@ func (s *Server) getOrigin(w http.ResponseWriter, r *http.Request) {
 		Content: origin,
 	}
 
-	err = templates.ExecuteTemplate(w, "origin.html", page)
+	err = templates["origin"].ExecuteTemplate(w, "base.html", page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -74,14 +74,14 @@ func (s *Server) addOriginForm(w http.ResponseWriter, r *http.Request) {
 	page := Page{
 		Title: "Add Origin",
 	}
-	err := templates.ExecuteTemplate(w, "base.html", page)
+	err := templates["add_origin"].ExecuteTemplate(w, "base.html", page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
-// Post the new origin.
+// Post a new origin.
 //
 // Redirects to a detailed page for newly created origin.
 func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {

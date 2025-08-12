@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Title }}</title>
-</head>
-<body>
+{{ define "content" }}
     <h1>Plugins</h1>
     <a href="/plugins/add">Add Plugin</a>
     {{ if .Content }}
@@ -23,5 +16,4 @@
     {{ else}}
         <h3>No plugins available</h3>
     {{ end }}
-</body>
-</html>
+{{ end }}

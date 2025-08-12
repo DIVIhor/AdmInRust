@@ -23,7 +23,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	r.Get("/", s.mainHandler) //s.HelloWorldHandler)
+	// r.Get("/", s.mainHandler) //s.HelloWorldHandler)
 
 	// origin-related routes
 	s.registerOriginRoutes(r)
@@ -43,12 +43,12 @@ type Page struct {
 	// TODO add URL parameter
 }
 
-func (s *Server) mainHandler(w http.ResponseWriter, r *http.Request) {
-	err := templates.ExecuteTemplate(w, "base.html", "")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-}
+// func (s *Server) mainHandler(w http.ResponseWriter, r *http.Request) {
+// 	err := templates.ExecuteTemplate(w, "base.html", "")
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 	}
+// }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)

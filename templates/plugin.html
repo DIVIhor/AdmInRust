@@ -1,10 +1,11 @@
+{{ define "content" }}
 <h1>{{ .Title }}</h1>
 
 <!-- perhaps move script to additional block for further reuse -->
 <script>
-    function deletePlugin(pluginId) {
+    function deletePlugin(pluginSlug) {
         // Send DELETE request using fetch
-        fetch('/plugins/' + pluginId, {
+        fetch('/plugins/' + pluginSlug, {
             method: 'DELETE',  // Set the HTTP method to DELETE
             headers: {
                 'Content-Type': 'application/json',  // Optional: Set content type for JSON request
@@ -39,4 +40,5 @@
     <li>{{ .Content.IsUpdatedOnServer }}</li>
 </ul>
 
-<button onclick="deletePlugin('{{ .Content.ID }}')">Delete Plugin</button>
+<button onclick="deletePlugin('{{ .Content.Slug }}')">Delete Plugin</button>
+{{ end }}

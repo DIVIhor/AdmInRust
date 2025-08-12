@@ -1,10 +1,11 @@
+{{ define "content" }}
 <h1>{{ .Title }}</h1>
 
 <!-- perhaps move script to additional block for further reuse -->
 <script>
-    function deleteOrigin(originId) {
+    function deleteOrigin(originSlug) {
         // Send DELETE request using fetch
-        fetch('/origins/' + originId, {
+        fetch('/origins/' + originSlug, {
             method: 'DELETE',  // Set the HTTP method to DELETE
             headers: {
                 'Content-Type': 'application/json',  // Optional: Set content type for JSON request
@@ -41,4 +42,5 @@
     </li>
 </ul>
 
-<button onclick="deleteOrigin('{{ .Content.ID }}')">Delete Origin</button>
+<button onclick="deleteOrigin('{{ .Content.Slug }}')">Delete Origin</button>
+{{ end }}

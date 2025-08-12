@@ -41,7 +41,7 @@ func (s *Server) getPlugins(w http.ResponseWriter, r *http.Request) {
 		Content: plugins,
 	}
 
-	err = templates.ExecuteTemplate(w, "plugins.html", page)
+	err = templates["plugins"].ExecuteTemplate(w, "base.html", page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -63,7 +63,7 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 		Content: plugin,
 	}
 
-	err = templates.ExecuteTemplate(w, "plugin.html", page)
+	err = templates["plugin"].ExecuteTemplate(w, "base.html", page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -91,7 +91,7 @@ func (s *Server) addPluginForm(w http.ResponseWriter, r *http.Request) {
 		page.Meta = meta
 	}
 
-	err = templates.ExecuteTemplate(w, "add_plugin.html", page)
+	err = templates["add_plugin"].ExecuteTemplate(w, "base.html", page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -172,13 +172,6 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 // Delete plugin by its ID and redirect to the plugin list page
 func (s *Server) deletePlugin(w http.ResponseWriter, r *http.Request) {
 	pluginSlug := r.PathValue("pluginSlug")
-	// pluginId, err := strconv.Atoi(pluginIdStr)
-	// if err != nil {
-	// 	log.Println("invalid originID:", pluginIdStr)
-	// 	http.Error(w, "plugin ID should be a number", http.StatusBadRequest)
-	// 	return
-	// }
-
 	_, err := s.db.Queries().DeletePlugin(r.Context(), pluginSlug)
 	if err != nil {
 		log.Println(err)
