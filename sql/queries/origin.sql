@@ -13,6 +13,15 @@ SELECT *
 FROM plugin_origins
 WHERE slug = ?;
 
+-- name: UpdateOrigin :one
+UPDATE plugin_origins
+SET url = ?,
+    path_to_plugin_list = ?,
+    has_api = ?,
+    updated_at = datetime('now')
+WHERE slug = ?
+RETURNING *;
+
 -- name: DeleteOrigin :one
 DELETE
 FROM plugin_origins

@@ -127,3 +127,41 @@ func (q *Queries) GetOrigins(ctx context.Context) ([]PluginOrigin, error) {
 	}
 	return items, nil
 }
+
+const updateOrigin = `-- name: UpdateOrigin :one
+UPDATE plugin_origins
+SET url = ?,
+    path_to_plugin_list = ?,
+    has_api = ?,
+    updated_at = datetime('now')
+WHERE slug = ?
+RETURNING id, name, slug, url, path_to_plugin_list, has_api, created_at, updated_at
+`
+
+type UpdateOriginParams struct {
+	Url              string
+	PathToPluginList string
+	HasApi           int64
+	Slug             string
+}
+
+func (q *Queries) UpdateOrigin(ctx context.Context, arg UpdateOriginParams) (PluginOrigin, error) {
+	row := q.db.QueryRowContext(ctx, updateOrigin,
+		arg.Url,
+		arg.PathToPluginList,
+		arg.HasApi,
+		arg.Slug,
+	)
+	var i PluginOrigin
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.Url,
+		&i.PathToPluginList,
+		&i.HasApi,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
