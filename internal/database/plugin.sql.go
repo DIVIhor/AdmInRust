@@ -95,6 +95,46 @@ func (q *Queries) GetPlugin(ctx context.Context, slug string) (Plugin, error) {
 	return i, err
 }
 
+const getPluginWithOriginsJson = `-- name: GetPluginWithOriginsJson :one
+SELECT plugins.id, plugins.name, plugins.slug, plugins.description, plugins.url, plugins.origin_id, plugins.is_updated_on_server, plugins.created_at, plugins.updated_at, (
+    SELECT json_group_array(json_object('id', origins.id, 'name', origins.name))
+    FROM plugin_origins origins
+) AS origin_options
+FROM plugins
+WHERE plugins.slug = ?
+`
+
+type GetPluginWithOriginsJsonRow struct {
+	ID                int64
+	Name              string
+	Slug              string
+	Description       string
+	Url               string
+	OriginID          int64
+	IsUpdatedOnServer int64
+	CreatedAt         string
+	UpdatedAt         string
+	OriginOptions     interface{}
+}
+
+func (q *Queries) GetPluginWithOriginsJson(ctx context.Context, slug string) (GetPluginWithOriginsJsonRow, error) {
+	row := q.db.QueryRowContext(ctx, getPluginWithOriginsJson, slug)
+	var i GetPluginWithOriginsJsonRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.Description,
+		&i.Url,
+		&i.OriginID,
+		&i.IsUpdatedOnServer,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.OriginOptions,
+	)
+	return i, err
+}
+
 const getPlugins = `-- name: GetPlugins :many
 SELECT id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
 FROM plugins
@@ -132,4 +172,46 @@ func (q *Queries) GetPlugins(ctx context.Context) ([]Plugin, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updatePlugin = `-- name: UpdatePlugin :one
+UPDATE plugins
+SET description = ?,
+    url = ?,
+    origin_id = ?,
+    is_updated_on_server = ?,
+    updated_at = datetime('now')
+WHERE slug = ?
+RETURNING id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
+`
+
+type UpdatePluginParams struct {
+	Description       string
+	Url               string
+	OriginID          int64
+	IsUpdatedOnServer int64
+	Slug              string
+}
+
+func (q *Queries) UpdatePlugin(ctx context.Context, arg UpdatePluginParams) (Plugin, error) {
+	row := q.db.QueryRowContext(ctx, updatePlugin,
+		arg.Description,
+		arg.Url,
+		arg.OriginID,
+		arg.IsUpdatedOnServer,
+		arg.Slug,
+	)
+	var i Plugin
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Slug,
+		&i.Description,
+		&i.Url,
+		&i.OriginID,
+		&i.IsUpdatedOnServer,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

@@ -40,5 +40,6 @@
     <li>{{ .Content.IsUpdatedOnServer }}</li>
 </ul>
 
+<a href="/plugins/edit/{{ .Content.Slug }}">Edit Plugin</a>
 <button onclick="deletePlugin('{{ .Content.Slug }}')">Delete Plugin</button>
 {{ end }}

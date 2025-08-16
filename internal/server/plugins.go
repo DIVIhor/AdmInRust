@@ -2,6 +2,7 @@ package server
 
 import (
 	"adminrust/internal/database"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,9 +20,13 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 		r.Get("/add", s.addPluginForm)
 		r.Post("/add", s.addPlugin)
 
+		r.Route("/edit/{pluginSlug:[a-z0-9-]+}", func(r chi.Router) {
+			r.Get("/", s.updatePluginForm)
+			r.Post("/", s.updatePlugin)
+		})
+
 		r.Route("/{pluginSlug:[a-z0-9-]+}", func(r chi.Router) {
 			r.Get("/", s.getPlugin)
-			// r.Put("/", s.updatePlugin)
 			r.Delete("/", s.deletePlugin)
 		})
 	})
@@ -41,7 +46,7 @@ func (s *Server) getPlugins(w http.ResponseWriter, r *http.Request) {
 		Content: plugins,
 	}
 
-	err = templates["plugins"].ExecuteTemplate(w, "base.html", page)
+	err = templates["plugins"].Execute(w, page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -53,7 +58,7 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 	pluginSlug := r.PathValue("pluginSlug")
 	plugin, err := s.db.Queries().GetPlugin(r.Context(), pluginSlug)
 	if err != nil {
-		log.Println(err.Error())
+		log.Println(err)
 		http.Error(w, "page not found", http.StatusNotFound)
 		return
 	}
@@ -63,7 +68,7 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 		Content: plugin,
 	}
 
-	err = templates["plugin"].ExecuteTemplate(w, "base.html", page)
+	err = templates["plugin"].Execute(w, page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -91,14 +96,14 @@ func (s *Server) addPluginForm(w http.ResponseWriter, r *http.Request) {
 		page.Meta = meta
 	}
 
-	err = templates["add_plugin"].ExecuteTemplate(w, "base.html", page)
+	err = templates["add_plugin"].Execute(w, page)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
-// Post the new plugin.
+// Post a new plugin.
 //
 // Redirects to a detailed page for newly created plugin.
 func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
@@ -119,7 +124,7 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 
 	// URL must match the regex with alphanumerical format
 	url := r.FormValue("url")
-	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9]+.[a-z]{1,5}/([a-zA-Z0-9/%?=&_-]+)$")
+	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9-]+.[a-z]{1,5}/([a-zA-Z0-9/%?=&_-]+)$")
 	validUrl := urlTemplate.FindString(url)
 	if validUrl == "" {
 		log.Println("invalid URL:", url)
@@ -164,10 +169,121 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/plugins/%s", plugin.Slug), http.StatusFound)
 }
 
+// Render the update plugin details form with pre-loaded plugin data from request context
+func (s *Server) updatePluginForm(w http.ResponseWriter, r *http.Request) {
+	pluginSlug := r.PathValue("pluginSlug")
+
+	// get plugin with whole list of origins from DB
+	pluginWithOrigins, err := s.db.Queries().GetPluginWithOriginsJson(r.Context(), pluginSlug)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "page not found", http.StatusNotFound)
+		return
+	}
+
+	// extract origins from JSON string
+	type origin struct {
+		ID   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+	origins := []origin{}
+	rawStr := pluginWithOrigins.OriginOptions.(string)
+	rawJSON := []byte(rawStr)
+	err = json.Unmarshal([]byte(rawJSON), &origins)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// convert plugin with origins to a proper Plugin struct
+	plugin := database.Plugin{
+		ID:                pluginWithOrigins.ID,
+		Name:              pluginWithOrigins.Name,
+		Slug:              pluginWithOrigins.Slug,
+		Description:       pluginWithOrigins.Description,
+		Url:               pluginWithOrigins.Url,
+		OriginID:          pluginWithOrigins.OriginID,
+		IsUpdatedOnServer: pluginWithOrigins.IsUpdatedOnServer,
+		CreatedAt:         pluginWithOrigins.CreatedAt,
+		UpdatedAt:         pluginWithOrigins.UpdatedAt,
+	}
+
+	page := Page{
+		Title:   "Add Plugin",
+		Content: plugin,
+		Meta:    struct{ Origins []origin }{origins},
+	}
+
+	err = templates["add_plugin"].Execute(w, page)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+	}
+}
+
 // Update plugin details
-// func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
-// 	just a placeholder for now
-// }
+func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
+	// check if the retrieved form contains hidden PUT method
+	if r.FormValue("_method") != "PUT" {
+		log.Println("post with no PUT input")
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	pluginSlug := r.PathValue("pluginSlug")
+
+	// description can be empty since Codefling doesn't provide any
+	// for future improvements this should have some limit
+	descr := r.FormValue("description")
+
+	// URL must match the regex with alphanumerical format
+	url := r.FormValue("url")
+	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9-]+.[a-z]{1,5}/([a-zA-Z0-9/%?=&_-]+)$")
+	validUrl := urlTemplate.FindString(url)
+	if validUrl == "" {
+		log.Println("invalid URL:", url)
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	// origin cannot be empty and should be an integer
+	originIdStr := r.FormValue("origin")
+	if originIdStr == "" {
+		log.Println("empty originID")
+		http.Error(w, "origin ID cannot be empty", http.StatusBadRequest)
+		return
+	}
+	originId, err := strconv.Atoi(originIdStr)
+	if err != nil {
+		log.Println("invalid originID:", originIdStr)
+		http.Error(w, "origin ID should be a number", http.StatusBadRequest)
+		return
+	}
+
+	// prepare data for updating the plugin in DB
+	updPluginParams := database.UpdatePluginParams{
+		Description: descr,
+		Url:         url,
+		OriginID:    int64(originId),
+		Slug:        pluginSlug,
+	}
+	isUpdatedOnServer := r.FormValue("isUpdatedOnServer")
+	if isUpdatedOnServer == "yes" {
+		updPluginParams.IsUpdatedOnServer = 1
+	}
+
+	// update the plugin in DB
+	plugin, err := s.db.Queries().UpdatePlugin(r.Context(), updPluginParams)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// redirect to a plugin detailed page
+	http.Redirect(w, r, fmt.Sprintf("/plugins/%s", plugin.Slug), http.StatusFound)
+}
 
 // Delete plugin by its ID and redirect to the plugin list page
 func (s *Server) deletePlugin(w http.ResponseWriter, r *http.Request) {
