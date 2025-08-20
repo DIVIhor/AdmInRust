@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -32,6 +33,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.registerPluginRoutes(r)
 
 	r.Get("/health", s.healthHandler)
+
+	r.NotFound(notFound)
+	r.MethodNotAllowed(notAllowed)
 
 	return r
 }
@@ -65,4 +69,33 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(s.db.Health())
 	_, _ = w.Write(jsonResp)
+}
+
+// Write HTTP error status code in header then render error template
+func errorHandler(w http.ResponseWriter, httpErrCode int, httpErr string) {
+	page := Page{
+		Title:   fmt.Sprintf("(%d) %s", httpErrCode, httpErr),
+		Content: struct{ Error string }{httpErr},
+	}
+
+	w.WriteHeader(httpErrCode)
+	err := templates["http_error"].Execute(w, page)
+	if err != nil {
+		http.Error(w, httpErr, httpErrCode)
+	}
+}
+
+// HTTP 404 handler
+func notFound(w http.ResponseWriter, r *http.Request) {
+	errorHandler(w, http.StatusNotFound, "Page not found")
+}
+
+// HTTP 405 handler
+func notAllowed(w http.ResponseWriter, r *http.Request) {
+	errorHandler(w, http.StatusMethodNotAllowed, "Not allowed")
+}
+
+// HTTP 500 handler
+func internalServerErr(w http.ResponseWriter) {
+	errorHandler(w, http.StatusInternalServerError, "Internal server error")
 }
