@@ -30,25 +30,17 @@ func (s *Server) registerOriginRoutes(r *chi.Mux) {
 	})
 }
 
-// Render a list of origins
+// Get from DB and render a list of origins
 func (s *Server) getOrigins(w http.ResponseWriter, r *http.Request) {
 	origins, err := s.db.Queries().GetOrigins(r.Context())
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
-	page := Page{
-		Title:   "Origins",
-		Content: origins,
-	}
-
-	err = templates["origins"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render origins page
+	renderPage(w, "origins", "Origins", origins, nil)
 }
 
 // Render a detailed page for a specific origin by its ID
@@ -61,28 +53,14 @@ func (s *Server) getOrigin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := Page{
-		Title:   origin.Name,
-		Content: origin,
-	}
-
-	err = templates["origin"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render detailed origin page
+	renderPage(w, "origin", origin.Name, origin, nil)
 }
 
-// Render the page with adding origin form
+// Render the page with origin addition form
 func (s *Server) addOriginForm(w http.ResponseWriter, r *http.Request) {
-	page := Page{
-		Title: "Add Origin",
-	}
-	err := templates["add_origin"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render origin addition form
+	renderPage(w, "add_origin", "Add Origin", nil, nil)
 }
 
 // Post a new origin.
@@ -137,14 +115,14 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	origin, err := s.db.Queries().AddOrigin(r.Context(), originParams)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/origins/%s", origin.Slug), http.StatusFound)
 }
 
-// Render a form to update origin values
+// Render an origin updating form
 func (s *Server) updateOriginForm(w http.ResponseWriter, r *http.Request) {
 	originSlug := r.PathValue("originSlug")
 	// get origin data from DB
@@ -155,16 +133,8 @@ func (s *Server) updateOriginForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := Page{
-		Title:   "Add Origin",
-		Content: origin,
-	}
-
-	err = templates["add_origin"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render origin updating form
+	renderPage(w, "add_origin", "Update Origin", origin, nil)
 }
 
 // Update origin details
@@ -215,10 +185,11 @@ func (s *Server) updateOrigin(w http.ResponseWriter, r *http.Request) {
 	origin, err := s.db.Queries().UpdateOrigin(r.Context(), updOriginParams)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
+	// redirect to an origin detailed page
 	http.Redirect(w, r, fmt.Sprintf("/origins/%s", origin.Slug), http.StatusFound)
 }
 
@@ -228,7 +199,7 @@ func (s *Server) deleteOrigin(w http.ResponseWriter, r *http.Request) {
 	_, err := s.db.Queries().DeleteOrigin(r.Context(), originSlug)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 

@@ -1,6 +1,8 @@
 package server
 
 import (
+	"log"
+	"net/http"
 	"regexp"
 	"strings"
 )
@@ -25,4 +27,26 @@ func slugify(name string) (slug string) {
 	slug = strings.Trim(slug, "-")
 
 	return slug
+}
+
+// Prepare, populate, and render page with many entries
+// or return Internal Server Error
+func renderPage(w http.ResponseWriter, tmpltName, pageTitle string, pageContent, pageMeta any) {
+	// prepare data for template population
+	page := Page{
+		Title: pageTitle,
+	}
+	if pageContent != nil {
+		page.Content = pageContent
+	}
+	if pageMeta != nil {
+		page.Meta = pageMeta
+	}
+
+	// populate and render template or return HTTP 500
+	err := templates[tmpltName].Execute(w, page)
+	if err != nil {
+		log.Println(err)
+		internalServerErr(w)
+	}
 }

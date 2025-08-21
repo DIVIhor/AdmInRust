@@ -11,6 +11,13 @@ import (
 	"github.com/go-chi/cors"
 )
 
+type Page struct {
+	Title   string
+	Content any
+	Meta    any
+	// TODO add URL parameter
+}
+
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -38,13 +45,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.MethodNotAllowed(notAllowed)
 
 	return r
-}
-
-type Page struct {
-	Title   string
-	Content any
-	Meta    any
-	// TODO add URL parameter
 }
 
 // func (s *Server) mainHandler(w http.ResponseWriter, r *http.Request) {

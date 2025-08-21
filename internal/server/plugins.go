@@ -37,20 +37,12 @@ func (s *Server) getPlugins(w http.ResponseWriter, r *http.Request) {
 	plugins, err := s.db.Queries().GetPlugins(r.Context())
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
-	page := Page{
-		Title:   "Plugins",
-		Content: plugins,
-	}
-
-	err = templates["plugins"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// render plugins page
+	renderPage(w, "plugins", "Plugins", plugins, nil)
 }
 
 // Render a detailed page for a specific plugin by its ID
@@ -63,44 +55,26 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := Page{
-		Title:   plugin.Name,
-		Content: plugin,
-	}
-
-	err = templates["plugin"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render detailed origin page
+	renderPage(w, "plugin", plugin.Name, plugin, nil)
 }
 
-// Render the page with adding plugin form
+// Render the page with plugin addition form
 func (s *Server) addPluginForm(w http.ResponseWriter, r *http.Request) {
-	page := Page{
-		Title: "Add Plugin",
-	}
-
+	// get available origins to use as meta data in form
 	origins, err := s.db.Queries().GetOrigins(r.Context())
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
-
+	meta := struct{ Origins []database.PluginOrigin }{}
 	if origins != nil {
-		meta := struct {
-			Origins []database.PluginOrigin
-		}{origins}
-
-		page.Meta = meta
+		meta = struct{ Origins []database.PluginOrigin }{origins}
 	}
 
-	err = templates["add_plugin"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render plugin addition form
+	renderPage(w, "add_plugin", "Add Plugin", nil, meta)
 }
 
 // Post a new plugin.
@@ -162,14 +136,14 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 	plugin, err := s.db.Queries().AddPlugin(r.Context(), pluginParams)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
 	http.Redirect(w, r, fmt.Sprintf("/plugins/%s", plugin.Slug), http.StatusFound)
 }
 
-// Render the update plugin details form with pre-loaded plugin data from request context
+// Render a plugin updating form
 func (s *Server) updatePluginForm(w http.ResponseWriter, r *http.Request) {
 	pluginSlug := r.PathValue("pluginSlug")
 
@@ -192,8 +166,13 @@ func (s *Server) updatePluginForm(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal([]byte(rawJSON), &origins)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
+	}
+	// use available origins as meta data in form
+	meta := struct{ Origins []origin }{}
+	if origins != nil {
+		meta = struct{ Origins []origin }{origins}
 	}
 
 	// convert plugin with origins to a proper Plugin struct
@@ -209,17 +188,8 @@ func (s *Server) updatePluginForm(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:         pluginWithOrigins.UpdatedAt,
 	}
 
-	page := Page{
-		Title:   "Add Plugin",
-		Content: plugin,
-		Meta:    struct{ Origins []origin }{origins},
-	}
-
-	err = templates["add_plugin"].Execute(w, page)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
-	}
+	// populate and render plugin updating form
+	renderPage(w, "add_plugin", "Update Plugin", plugin, meta)
 }
 
 // Update plugin details
@@ -277,7 +247,7 @@ func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
 	plugin, err := s.db.Queries().UpdatePlugin(r.Context(), updPluginParams)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
@@ -291,7 +261,7 @@ func (s *Server) deletePlugin(w http.ResponseWriter, r *http.Request) {
 	_, err := s.db.Queries().DeletePlugin(r.Context(), pluginSlug)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		internalServerErr(w)
 		return
 	}
 
