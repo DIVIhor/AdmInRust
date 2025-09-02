@@ -50,3 +50,20 @@ func renderPage(w http.ResponseWriter, tmpltName, pageTitle string, pageContent,
 		internalServerErr(w)
 	}
 }
+
+// Compile a regexp pattern and return a validator function that checks
+// if the input matches the required pattern
+func validate(pattern string) (validator func(string) bool) {
+	re := regexp.MustCompile(pattern)
+	return func(input string) bool {
+		return re.MatchString(input)
+	}
+}
+
+// Form field validators
+var (
+	validateName           = validate(`^[\w -]{3,50}$`)
+	validateOriginURL      = validate(`^https?://[a-zA-Z0-9-]+\.[a-z]{2,5}/?$`)
+	validatePluginURL      = validate(`^(https?://[a-zA-Z0-9-]+\.[a-z]{2,5}(/[a-zA-Z0-9%?=&_-]+)+)$`)
+	validatePluginsURLPath = validate(`^(https?://[a-zA-Z0-9-]+\.[a-z]{2,5}(/[a-zA-Z0-9%?=&_-]+)+|(/[a-zA-Z0-9%?=&_-]+)+)$`)
+)

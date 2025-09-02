@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -70,9 +70,8 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	// since plugin origins usually are uMod and Codefling,
 	// origin name shouldn't be less than 3 symbols long
 	name := r.FormValue("name")
-	nameTemplate := regexp.MustCompile(`^[\w ]{3,}$`)
-	validName := nameTemplate.FindString(name)
-	if validName == "" {
+	isValidName := validateName(name)
+	if !isValidName {
 		log.Println("name error:", name)
 		http.Error(w, "Wrong name format", http.StatusBadRequest)
 		return
@@ -80,29 +79,34 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 
 	// URL must match the regex with alphanumerical format
 	url := r.FormValue("url")
-	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9-]+.[a-z]{1,5}$")
-	validUrl := urlTemplate.FindString(url)
-	if validUrl == "" {
+	isValidURL := validateOriginURL(url)
+	if !isValidURL {
 		log.Println("invalid URL:", url)
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
 	}
+	// cut possible trailing slash
+	url = strings.TrimSuffix(url, "/")
 
 	// since path to plugin list is a URL path, it must match the regex
 	// (!) perhaps the full URL should also be a valid path with further
 	// processing, but not for now
 	pathToPluginList := r.FormValue("pathToPluginList")
-	pathTemplate := regexp.MustCompile("^/([a-zA-Z0-9/%?=&_-]+)$")
-	validPath := pathTemplate.FindString(pathToPluginList)
-	if validPath == "" {
+	isValidPath := validatePluginsURLPath(pathToPluginList)
+	if !isValidPath {
 		log.Println("invalid path to plugins:", pathToPluginList)
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
 	}
+	// cut host prefix if exists
+	if strings.HasPrefix(pathToPluginList, "http") {
+		strs := strings.SplitAfterN(pathToPluginList, "/", 4)
+		pathToPluginList = "/" + strs[3]
+	}
 
-	slug := slugify(validName)
+	slug := slugify(name)
 	originParams := database.AddOriginParams{
-		Name:             validName,
+		Name:             name,
 		Slug:             slug,
 		Url:              url,
 		PathToPluginList: pathToPluginList,
@@ -150,24 +154,29 @@ func (s *Server) updateOrigin(w http.ResponseWriter, r *http.Request) {
 
 	// URL must match the regex with alphanumerical format
 	url := r.FormValue("url")
-	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9-]+.[a-z]{1,5}$")
-	validUrl := urlTemplate.FindString(url)
-	if validUrl == "" {
+	isValidURL := validateOriginURL(url)
+	if !isValidURL {
 		log.Println("invalid URL:", url)
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
 	}
+	// cut possible trailing slash
+	url = strings.TrimSuffix(url, "/")
 
 	// since path to plugin list is a URL path, it must match the regex
 	// (!) perhaps the full URL should also be a valid path with further
 	// processing, but not for now
 	pathToPluginList := r.FormValue("pathToPluginList")
-	pathTemplate := regexp.MustCompile("^/([a-zA-Z0-9/%?=&_-]+)$")
-	validPath := pathTemplate.FindString(pathToPluginList)
-	if validPath == "" {
+	isValidPath := validatePluginsURLPath(pathToPluginList)
+	if !isValidPath {
 		log.Println("invalid path to plugins:", pathToPluginList)
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
+	}
+	// cut host prefix if exists
+	if strings.HasPrefix(pathToPluginList, "http") {
+		strs := strings.SplitAfterN(pathToPluginList, "/", 4)
+		pathToPluginList = "/" + strs[3]
 	}
 
 	// prepare data for updating the origin in DB

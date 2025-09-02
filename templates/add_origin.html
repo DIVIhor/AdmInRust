@@ -12,7 +12,7 @@
         <div class="relative h-11 w-full min-w-[200px]">
             <input type="text"
                 class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]"
-                name="name" placeholder="Name" pattern="[a-zA-Z0-9]{3,}$" required
+                name="name" placeholder="Name" pattern="^[\w -]{3,50}$" required
                 {{ if .Content }}
                 value="{{ .Content.Name }}"
                 disabled
@@ -21,7 +21,7 @@
         <div class="relative h-11 w-full min-w-[200px]">
             <input type="url"
                 class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]"
-                name="url" placeholder="URL" pattern="^https://[a-zA-Z0-9-]+.[a-z]{1,5}$" required
+                name="url" placeholder="URL" pattern="^https?://[a-zA-Z0-9-]+\.[a-z]{2,5}/?$" required
                 {{ if .Content }}
                 value="{{ .Content.Url }}"
                 {{ end }}>
@@ -29,7 +29,7 @@
         <div class="relative h-11 w-full min-w-[200px]">
             <input type="text"
                 class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]"
-                name="pathToPluginList" placeholder="URL path to plugin list" pattern="^/[a-zA-Z0-9/%?=&_-]+$" required
+                name="pathToPluginList" placeholder="URL path to plugin list" pattern="^(https?://[a-zA-Z0-9-]+\.[a-z]{2,5}(/[a-zA-Z0-9%?=&_-]+)+|(/[a-zA-Z0-9%?=&_-]+)+)$" required
                 {{ if .Content }}
                 value="{{ .Content.PathToPluginList }}"
                 {{ end }}>

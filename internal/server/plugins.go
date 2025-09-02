@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
@@ -84,9 +83,8 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 	// since plugin plugins usually are uMod and Codefling,
 	// plugin name shouldn't be less than 3 symbols long
 	name := r.FormValue("name")
-	nameTemplate := regexp.MustCompile(`^[\w ]{3,}$`)
-	validName := nameTemplate.FindString(name)
-	if validName == "" {
+	isValidName := validateName(name)
+	if !isValidName {
 		log.Println("name error", name)
 		http.Error(w, "Wrong name format", http.StatusBadRequest)
 		return
@@ -98,9 +96,8 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 
 	// URL must match the regex with alphanumerical format
 	url := r.FormValue("url")
-	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9-]+.[a-z]{1,5}/([a-zA-Z0-9/%?=&_-]+)$")
-	validUrl := urlTemplate.FindString(url)
-	if validUrl == "" {
+	isValidURL := validatePluginURL(url)
+	if !isValidURL {
 		log.Println("invalid URL:", url)
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
@@ -209,9 +206,8 @@ func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
 
 	// URL must match the regex with alphanumerical format
 	url := r.FormValue("url")
-	urlTemplate := regexp.MustCompile("^https://[a-zA-Z0-9-]+.[a-z]{1,5}/([a-zA-Z0-9/%?=&_-]+)$")
-	validUrl := urlTemplate.FindString(url)
-	if validUrl == "" {
+	isValidURL := validatePluginURL(url)
+	if !isValidURL {
 		log.Println("invalid URL:", url)
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
