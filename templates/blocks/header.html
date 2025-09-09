@@ -1,17 +1,41 @@
-<header class="bg-gray-800 p-4 flex justify-between items-center">
-    <!-- Emblem (Leftt) -->
-    <div class="flex pl-16">
-        <a href="/">
-            <b><span class="text-white-200">AdmInRust</span></b>
-        </a>
-    </div>
-    <!-- Navigation (Centered) -->
-    <div class="flex space-x-8 flex-1 justify-center">
-        <a class="text-blue-500 hover:text-blue-300" href="/origins">Origins</a>
-        <a class="text-blue-500 hover:text-blue-300" href="/plugins">Plugins</a>
-    </div>
-    <!-- Search Bar (Right) -->
-    <div class="flex-none">
-        <input type="text" placeholder="Search..." class="p-2 rounded bg-gray-700 text-white">
-    </div>
+<header>
+  <!-- Main navigation container -->
+  <nav
+    class="relative flex w-full flex-nowrap items-center justify-between bg-[#332D2D] py-2 shadow-dark-mild lg:flex-wrap lg:justify-start lg:py-4"
+    data-twe-navbar-ref>
+    <div class="mx-10 flex w-full flex-wrap items-center justify-between px-3">
+      <div class="mx-2">
+        <a class="text-xl text-[#CD412B] hover:text-[hsl(8,65%,59%)]" href="/">AdmInRust</a>
+      </div>
+      <!-- Hamburger button for mobile view -->
+      <button
+        class="block border-0 bg-transparent px-2 text-neutral-300 hover:no-underline hover:shadow-none focus:no-underline focus:shadow-none focus:outline-none focus:ring-0 dark:text-neutral-200 lg:hidden"
+        type="button" data-twe-collapse-init data-twe-target="#navbar" aria-controls="navbar" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <!-- Hamburger icon -->
+        <span class="[&>svg]:w-7 [&>svg]:stroke-black/50 dark:[&>svg]:stroke-neutral-200">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+      </button>
+
+      <!-- Collapsible navbar container -->
+      <div class="!visible mt-2 hidden flex-grow basis-[100%] items-center lg:mt-0 lg:!flex lg:basis-auto" id="navbar"
+        data-twe-collapse-item>
+        <!-- Left links -->
+        <ul class="list-style-none flex flex-col ps-0 lg:mt-0 lg:flex-row" data-twe-navbar-nav-ref>
+          <li class="my-4 px-3 lg:my-0 lg:pe-0 lg:ps-0" data-twe-nav-item-ref>
+            <a class="text-neutral-300 transition duration-200 hover:text-neutral-200 hover:ease-in-out focus:text-neutral-200 active:text-black/80 motion-reduce:transition-none lg:px-3"
+              aria-current="page" href="/origins" data-twe-nav-link-ref>Origins</a>
+          </li>
+          <li class="my-4 px-3 lg:my-0 lg:pe-0 lg:ps-0" data-twe-nav-item-ref>
+            <a class="text-neutral-300 transition duration-200 hover:text-neutral-200 hover:ease-in-out focus:text-neutral-200 active:text-black/80 motion-reduce:transition-none lg:px-3"
+              aria-current="page" href="/plugins" data-twe-nav-link-ref>Plugins</a>
+          </li>
+        </ul>
+      </div>
+  </nav>
 </header>

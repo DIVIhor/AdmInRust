@@ -1,19 +1,36 @@
 {{ define "content" }}
-    <h1>Plugin Origins</h1>
-    <a href="/origins/add">Add Origin</a>
-    {{ if .Content }}
-        <ol>
-            {{ range .Content }}
-            <li>
-                <ul>
-                    <li><h3><a href="/origins/{{.Slug}}">{{ .Name }}</a></h3></li>
-                    <li><a href="{{ .Url }}">Website</a></li>
-                    <li><a href="{{ .Url }}{{ .PathToPluginList }}">Link to plugins</a></li>
-                </ul>
-            </li>
-            {{ end }}
-        </ol>
-    {{ else}}
-        <h3>No origins available</h3>
-    {{ end }}
+<div class="mt-10 flex items-center w-full flex-wrap justify-between">
+  <h1 class="mb-2 mt-0 text-4xl font-medium leading-tight text-white">Plugin Origins</h1>
+  <a class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+    href="/origins/add">
+    Add Origin
+  </a>
+</div>
+{{ if .Content }}
+<div class="grid-cols-1 sm:grid md:grid-cols-4 ">
+  {{ range .Content }}
+  <div
+    class="mx-3 mt-6 flex flex-col rounded-lg bg-[#332D2D] text-center shadow-secondary-1 dark:bg-surface-dark dark:text-white sm:shrink-0 sm:grow sm:basis-0 relative overflow-hidden bg-cover bg-no-repeat hover:bg-[hsla(0,0%,98%,0.15)]"
+    data-twe-ripple-init data-twe-ripple-color="light">
+    <div class="p-6">
+      <a href="/origins/{{.Slug}}">
+        <h4 class="mb-7 text-xl font-medium leading-tight">{{ .Name }}</h4>
+      </a>
+      <div class="flex justify-between">
+        <a href="{{ .Url }}"
+          class="w-[100%] me-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+          Website
+        </a>
+        <a href="{{ .Url }}{{ .PathToPluginList }}"
+          class="w-[100%] text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+          Plugins
+        </a>
+      </div>
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ else}}
+<h2 class="mb-2 mt-0 text-3xl font-medium leading-tight text-white">No origins available</h3>
+{{ end }}
 {{ end }}

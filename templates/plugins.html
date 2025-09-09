@@ -1,19 +1,50 @@
 {{ define "content" }}
-    <h1>Plugins</h1>
-    <a href="/plugins/add">Add Plugin</a>
-    {{ if .Content }}
-        <ol>
-            {{ range .Content }}
-            <li>
-                <ul>
-                    <li><h3><a href="/plugins/{{.Slug}}">{{ .Name }}</a></h3></li>
-                    <li><span>{{ .Description }}</span></li>
-                    <li>{{ .IsUpdatedOnServer }}</li>
-                </ul>
-            </li>
-            {{ end }}
-        </ol>
-    {{ else}}
-        <h3>No plugins available</h3>
-    {{ end }}
+<div class="mt-10 flex items-center w-full flex-wrap justify-between">
+  <h1 class="mb-2 mt-0 text-4xl font-medium leading-tight text-white">Plugins</h1>
+  <a class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+    href="/plugins/add">
+    Add Plugin
+  </a>
+</div>
+{{ if .Content }}
+<div class="grid-cols-1 sm:grid md:grid-cols-4 ">
+  {{ range .Content }}
+  <div
+    class="mx-3 mt-6 flex flex-col rounded-lg bg-[#332D2D] text-center shadow-secondary-1 dark:bg-surface-dark dark:text-white sm:shrink-0 sm:grow sm:basis-0 relative overflow-hidden bg-cover bg-no-repeat"
+    data-twe-ripple-init data-twe-ripple-color="light">
+    <div class="relative overflow-hidden bg-cover bg-no-repeat" data-twe-ripple-init data-twe-ripple-color="light">
+      <img class="rounded-t-lg" src="https://tecdn.b-cdn.net/img/new/standard/nature/186.jpg" alt="" />
+      <a href="/plugins/{{.Slug}}">
+        <div
+          class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-[hsla(0,0%,98%,0.15)] bg-fixed opacity-0 transition duration-300 ease-in-out hover:opacity-100">
+        </div>
+      </a>
+    </div>
+    <div class="p-6">
+      <a href="/plugins/{{.Slug}}">
+        <h4 class="mb-2 text-xl font-medium leading-tight">{{ .Name }}</h4>
+      </a>
+      <p class="text-base">{{ .Description }}</p>
+    </div>
+    <div
+      class="mt-auto flex flex-wrap justify-between border-t-2 border-neutral-100 px-6 py-3 text-center text-surface/75 dark:border-gray/10 dark:text-neutral-300">
+      <label class="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
+        <small class="text-gray-400">Updated:</small>
+        <input type="checkbox"
+          class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+          name="isUpdatedOnServer" value="yes"
+          {{ if .IsUpdatedOnServer }}checked{{ end }}
+          disabled>
+      </label>
+      <a href="{{ .Url }}"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+        Webpage
+      </a>
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ else}}
+<h2 class="mb-2 mt-0 text-3xl font-medium leading-tight text-white">No plugins available</h3>
+{{ end }}
 {{ end }}

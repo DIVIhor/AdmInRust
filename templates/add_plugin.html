@@ -1,65 +1,73 @@
 {{ define "content" }}
 {{ $originID := -1 }}
 {{ if .Content }}{{ $originID = .Content.OriginID }}{{ end }}
-<div class="h-screen w-screen flex items-center justify-center">
-    {{ if .Meta }}
-    <form class="p-8 rounded-lg shadow-md w-full max-w-sm" method="POST">
-        {{ if .Content }}<input type="hidden" name="_method" value="PUT">{{ end }}
-        <h1>
-            {{ if .Content}}
-            Edit Plugin
-            {{ else }}
-            Add new Plugin
-            {{ end }}
-        </h1>
-        <!-- make some fields uneditable/inactive in case of editing plugin -->
-        <div class="relative h-15 w-full min-w-[200px]">
-            <input type="text"
-                class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]"
-                name="name" placeholder="Name" pattern="^[\w -]{3,50}$" required
-                {{if .Content }}
-                value="{{ .Content.Name }}" disabled
-                {{ end }}>
-        </div>
-        <div class="relative h-15 w-full min-w-[200px]">
-            <input type="text"
-                class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]"
-                name="description" placeholder="Description"
-                {{ if .Content }}
-                value="{{ .Content.Description }}"
-                {{ end }}>
-        </div>
-        <div class="relative h-15 w-full min-w-[200px]">
-            <input type="url"
-                class="bg-[#222630] px-4 py-3 outline-none w-[280px] text-white rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#596A95] border-[#2B3040]"
-                name="url" placeholder="URL" pattern="^(https?://[a-zA-Z0-9-]+\.[a-z]{2,5}(/[a-zA-Z0-9%?=&_-]+)+)$" required
-                {{ if .Content }}
-                value="{{ .Content.Url }}"
-                {{ end }}>
-        </div>
-        <label class="text-sm mb-2 text-white-900 cursor-pointer" for="origin">
-        Origin
-        </label>
-        <select class="w-full bg-gray-800 rounded-md border-gray-700 text-white px-2 py-1" name="origin" id="origin">
-            {{ range .Meta.Origins }}
-            <option value="{{ .ID }}" {{ if eq $originID .ID }}selected{{ end }}>{{ .Name }}</option>
-            {{ end }}
-        </select>
-        <label class="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
-            <input type="checkbox" class="peer hidden" name="isUpdatedOnServer" value="yes"
-                {{ with .Content }}{{ if .IsUpdatedOnServer }}checked{{ end }}{{ end }}>
-            <div class="h-5 w-5 flex rounded-md border border-[#a2a1a833] light:bg-[#e8e8e8] dark:bg-[#212121] peer-checked:bg-[#7152f3] transition">
-                <svg fill="none" viewBox="0 0 24 24" class="w-5 h-5 light:stroke-[#e8e8e8] dark:stroke-[#212121]" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 12.6111L8.92308 17.5L20 6.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
-            </div>
-            is updated on server
-        </label>
-        <!-- <input type="submit" class="" value="submit"> -->
-        <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold p-2 mt-3 rounded w-[100%]">Submit</button>
-    </form>
-    {{ else }}
-    <h2>You should add at least one origin first</h2>
-    {{ end }}
+<h1
+  class="mt-10 mb-2 text-4xl font-medium leading-tight text-white">
+  {{ if .Content}}
+  Edit
+  {{ else }}
+  Add
+  {{ end }}
+  Plugin
+</h1>
+<div class="mt-10 flex items-center justify-center">
+  {{ if .Meta }}
+  <form class="p-8 rounded-lg shadow-md w-full max-w-sm mx-auto" method="POST">
+    {{ if .Content }}<input type="hidden" name="_method" value="PUT">{{ end }}
+    <!-- make some fields uneditable/inactive in case of editing plugin -->
+    <div class="relative mb-5">
+      <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+      <input type="text"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        name="name" placeholder="Name" pattern="^[\w -]{3,50}$"
+        {{if .Content }} value="{{ .Content.Name }}" disabled {{ end }}
+        required>
+    </div>
+    <div class="relative mb-5">
+      <label for="url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">URL</label>
+      <input
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        type="url" name="url"
+        placeholder="https://example.com/plugins"
+        pattern="^(https?://[a-zA-Z0-9-]+\.[a-z]{2,5}(/[a-zA-Z0-9%?=&_-]+)+)$"
+        {{ if .Content }} value="{{ .Content.Url }}" {{ end }}
+        required>
+    </div>
+    <div class="relative mb-5">
+      <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+      <textarea type="text"
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        name="description" rows="4" placeholder="Place plugin description here...">{{ if .Content }}{{ .Content.Description }}{{ end }}</textarea>
+    </div>
+    <div class="relative mb-5">
+      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="origin">
+        Select Origin
+      </label>
+      <select
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        name="origin" id="origin">
+        {{ range .Meta.Origins }}
+        <option value="{{ .ID }}" {{ if eq $originID .ID }}selected{{ end }}>{{ .Name }}</option>
+        {{ end }}
+      </select>
+    </div>
+    <div class="flex items-start mb-7">
+      <label class="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
+        <input type="checkbox"
+          class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+          name="isUpdatedOnServer" value="yes"
+          {{ with .Content }}{{ if .IsUpdatedOnServer }}checked{{ end }}{{ end }}
+          required>
+        is updated on server
+      </label>
+    </div>
+    <button
+      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[100%]">
+      Submit
+    </button>
+  </form>
+  {{ else }}
+  <h2 class="text-4xl font-extrabold dark:text-white">You should add at least one origin first</h2>
+  {{ end }}
 </div>
 {{ end }}
