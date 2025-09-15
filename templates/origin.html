@@ -1,47 +1,51 @@
 {{ define "content" }}
-<h1>{{ .Title }}</h1>
+<div class="mt-10 flex items-center w-full flex-wrap justify-between">
+  <h1 class="mb-2 mt-0 text-4xl font-medium leading-tight text-white">{{ .Title }}</h1>
+  <div class="flex items-center">
+    <a class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      href="/origins/edit/{{ .Content.Slug }}">
+      Edit
+    </a>
+    <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+      hx-delete="/origins/{{ .Content.Slug }}" hx-confirm="Are you sure you wish to delete this origin?">
+      Delete
+    </button>
+  </div>
+</div>
 
-<!-- perhaps move script to additional block for further reuse -->
-<script>
-    function deleteOrigin(originSlug) {
-        // Send DELETE request using fetch
-        fetch('/origins/' + originSlug, {
-            method: 'DELETE',  // Set the HTTP method to DELETE
-            headers: {
-                'Content-Type': 'application/json',  // Optional: Set content type for JSON request
-            },
-        })
-        .then(response => {
-            if (response.status === 204) {  // check response from the backend
-                    // Redirect the user to the new location (from the Location header)
-                    window.location.href = response.headers.get('redirectPath');
-                } else {
-                    alert("Failed to delete the entry.");
-                }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("There was an error deleting the origin.");
-        });
-    }
-</script>
+<section class="mx-5 mt-5">
+  <div class="mb-2 flex justify-between">
+    <!-- Plugin info: origin, update status, and URL -->
+    <div>
+      <label class="mb-1 flex flex-row items-center gap-2.5 dark:text-white light:text-black hover:pointer-events-none">
+        Has API:
+        <input type="checkbox"
+          class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+          name="hasApi" value="yes"
+          {{ with .Content }}{{ if .HasApi }}checked{{ end }}{{ end }}
+          disabled>
+      </label>
 
-<a href="/origins">back to Origins</a>
+      <ul>
+        <li class="mb-1">
+          <a href="{{ .Content.Url }}"
+            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            Website
+          </a>
+        </li>
+        <li>
+          <a href="{{ .Content.Url }}{{ .Content.PathToPluginList }}"
+            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            Plugins Webpage
+          </a>
+        </li>
+      </ul>
+    </div>
 
-<h2>Origin Details</h2>
-<ul>
-    <li><span>Added at: {{ .Content.CreatedAt }}</span></li>
-    <li><span>Last update: {{ .Content.UpdatedAt }}</span></li>
-    <li><a href="{{ .Content.Url }}">Visit</a></li>
-    <li><a href="{{ .Content.Url }}{{ .Content.PathToPluginList }}">Plugins page</a></li>
-    <li>
-        <label>
-            <input type="checkbox" name="has api" {{ if .Content.HasApi }}checked{{ end }} disabled>
-            <span>Has API</span>
-        </label>
-    </li>
-</ul>
-
-<a href="/origins/edit/{{ .Content.Slug }}">Edit Origin</a>
-<button onclick="deleteOrigin('{{ .Content.Slug }}')">Delete Origin</button>
+    <div>
+      <h5 class="mb-1 text-l italic text-neutral-500 dark:text-neutral-400">Last update: {{ .Content.UpdatedAt }}</h5>
+      <h5 class="text-l italic text-neutral-500 dark:text-neutral-400">Added at: {{ .Content.CreatedAt }}</h5>
+    </div>
+  </div>
+</section>
 {{ end }}

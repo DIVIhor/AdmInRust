@@ -27,8 +27,16 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 		r.Route("/{pluginSlug:[a-z0-9-]+}", func(r chi.Router) {
 			r.Get("/", s.getPlugin)
 			r.Delete("/", s.deletePlugin)
+
+			r.Get("/version", s.getVersion)
 		})
 	})
+}
+
+// Get plugin version info
+func (s *Server) getVersion(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(200)
+	w.Write([]byte("This version is v1.2.3"))
 }
 
 // Render a list of plugins
@@ -261,6 +269,6 @@ func (s *Server) deletePlugin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("redirectPath", "/plugins")
+	w.Header().Set("HX-Redirect", "/plugins")
 	w.WriteHeader(http.StatusNoContent)
 }

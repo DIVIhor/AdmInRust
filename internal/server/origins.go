@@ -212,6 +212,6 @@ func (s *Server) deleteOrigin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("redirectPath", "/origins")
+	w.Header().Set("HX-Redirect", "/origins")
 	w.WriteHeader(http.StatusNoContent)
 }
