@@ -1,9 +1,9 @@
 -- +goose Up
-CREATE TABLE plugin_versions (
+CREATE TABLE plugin_changelogs (
     id INTEGER PRIMARY KEY,
     plugin_id INTEGER NOT NULL,
     version TEXT NOT NULL,
-    change_log TEXT NOT NULL,
+    changelog TEXT NOT NULL,
     update_date TEXT NOT NULL,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
@@ -12,4 +12,4 @@ CREATE TABLE plugin_versions (
 );
 
 -- +goose Down
-DROP TABLE plugin_versions;
+DROP TABLE plugin_changelogs;
