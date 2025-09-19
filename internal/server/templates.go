@@ -45,16 +45,14 @@ func loadTemplates() {
 		// get an absolute path for content template
 		tempTemplates := makeAbsTemplPaths(absTemplateDir, name, templatePaths)
 		// parse templates in order base → blocks → content template
-		template, err := template.ParseFiles(tempTemplates...)
-		if err != nil {
-			log.Fatal(err)
-		}
+		tmplt := template.Must(template.ParseFiles(tempTemplates...))
 		// cache template to global templates
-		templates[name] = template
+		templates[name] = tmplt
 	}
-}
 
-// DRYing functions
+	changelogsPath := makeAbsTemplPath(absTemplateDir, "plugin_changelogs")
+	templates["plugin_changelogs"] = template.Must(template.ParseFiles(changelogsPath))
+}
 
 // Make an absolute path to HTML template
 func makeAbsTemplPath(absTemplateDir, fName string) (absPath string) {

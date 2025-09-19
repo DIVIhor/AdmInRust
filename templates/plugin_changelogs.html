@@ -1,0 +1,28 @@
+{{ if .Content }}
+<ul>
+  {{ range .Content }}
+  <li class="mb-2">
+    <ul class="mb-2 flex justify-between">
+      <li>
+        <span class="mb-1 dark:text-neutral-400">Version: <strong
+            class="font-medium text-white">{{ .Version }}</strong></span>
+      </li>
+      <li>
+        <span class="text-l italic text-neutral-500 dark:text-neutral-400">Updated at: {{ .UpdateDate }}</span>
+      </li>
+    </ul>
+    <ul class="mb-2">
+      <li class="mb-1">
+        <span class="font-bold">What's new:</span>
+      </li>
+      <li>
+        <p>{{ .Changelog }}</p>
+      </li>
+    </ul>
+    <hr class="border-gray-700">
+  </li>
+  {{ end }}
+</ul>
+{{ else }}
+<span class="font-bold">No data available</span>
+{{ end }}

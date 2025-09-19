@@ -16,6 +16,16 @@ type Plugin struct {
 	UpdatedAt         string
 }
 
+type PluginChangelog struct {
+	ID         int64
+	PluginID   int64
+	Version    string
+	Changelog  string
+	UpdateDate string
+	CreatedAt  string
+	UpdatedAt  string
+}
+
 type PluginCommand struct {
 	ID          int64
 	PluginID    int64
@@ -79,14 +89,4 @@ type PluginOrigin struct {
 	HasApi           int64
 	CreatedAt        string
 	UpdatedAt        string
-}
-
-type PluginVersion struct {
-	ID         int64
-	PluginID   int64
-	Version    string
-	ChangeLog  string
-	UpdateDate string
-	CreatedAt  string
-	UpdatedAt  string
 }
