@@ -138,7 +138,7 @@ func (q *Queries) GetPluginWithOriginsJson(ctx context.Context, slug string) (Ge
 const getPlugins = `-- name: GetPlugins :many
 SELECT id, name, slug, description, url, origin_id, is_updated_on_server, created_at, updated_at
 FROM plugins
-ORDER BY is_updated_on_server, updated_at, origin_id, name
+ORDER BY name
 `
 
 func (q *Queries) GetPlugins(ctx context.Context) ([]Plugin, error) {

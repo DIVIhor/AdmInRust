@@ -28,15 +28,22 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 			r.Get("/", s.getPlugin)
 			r.Delete("/", s.deletePlugin)
 
-			r.Get("/version", s.getVersion)
+			r.Get("/changelog", s.getPluginChangelog)
 		})
 	})
 }
 
 // Get plugin version info
-func (s *Server) getVersion(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-	w.Write([]byte("This version is v1.2.3"))
+func (s *Server) getPluginChangelog(w http.ResponseWriter, r *http.Request) {
+	pluginSlug := r.PathValue("pluginSlug")
+	changelog, err := s.db.Queries().GetPluginChangelog(r.Context(), pluginSlug)
+	if err != nil {
+		log.Println(err)
+		internalServerErr(w)
+		return
+	}
+
+	renderPage(w, "plugin_changelogs", "", changelog, nil)
 }
 
 // Render a list of plugins

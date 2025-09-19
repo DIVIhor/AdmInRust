@@ -6,7 +6,7 @@ RETURNING *;
 -- name: GetPlugins :many
 SELECT *
 FROM plugins
-ORDER BY is_updated_on_server, updated_at, origin_id, name;
+ORDER BY name;
 
 -- name: GetPlugin :one
 SELECT *
