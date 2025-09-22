@@ -28,22 +28,10 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 			r.Get("/", s.getPlugin)
 			r.Delete("/", s.deletePlugin)
 
+			// changelogs related
 			r.Get("/changelog", s.getPluginChangelog)
 		})
 	})
-}
-
-// Get plugin version info
-func (s *Server) getPluginChangelog(w http.ResponseWriter, r *http.Request) {
-	pluginSlug := r.PathValue("pluginSlug")
-	changelog, err := s.db.Queries().GetPluginChangelog(r.Context(), pluginSlug)
-	if err != nil {
-		log.Println(err)
-		internalServerErr(w)
-		return
-	}
-
-	renderPage(w, "plugin_changelogs", "", changelog, nil)
 }
 
 // Render a list of plugins
@@ -73,7 +61,7 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 	renderPage(w, "plugin", plugin.Name, plugin, nil)
 }
 
-// Render the page with plugin addition form
+// Render a page with plugin addition form
 func (s *Server) addPluginForm(w http.ResponseWriter, r *http.Request) {
 	// get available origins to use as meta data in form
 	origins, err := s.db.Queries().GetOrigins(r.Context())
