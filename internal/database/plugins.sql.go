@@ -95,6 +95,19 @@ func (q *Queries) GetPlugin(ctx context.Context, slug string) (Plugin, error) {
 	return i, err
 }
 
+const getPluginID = `-- name: GetPluginID :one
+SELECT id
+FROM plugins
+WHERE slug = ?
+`
+
+func (q *Queries) GetPluginID(ctx context.Context, slug string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getPluginID, slug)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getPluginWithOriginsJson = `-- name: GetPluginWithOriginsJson :one
 SELECT plugins.id, plugins.name, plugins.slug, plugins.description, plugins.url, plugins.origin_id, plugins.is_updated_on_server, plugins.created_at, plugins.updated_at, (
     SELECT json_group_array(json_object('id', origins.id, 'name', origins.name))

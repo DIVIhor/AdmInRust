@@ -3,6 +3,11 @@ INSERT INTO plugins(name, slug, description, url, origin_id, is_updated_on_serve
 VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
 RETURNING *;
 
+-- name: GetPluginID :one
+SELECT id
+FROM plugins
+WHERE slug = ?;
+
 -- name: GetPlugins :many
 SELECT *
 FROM plugins
