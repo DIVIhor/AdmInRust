@@ -9,21 +9,21 @@ import (
 	"context"
 )
 
-const addChangelog = `-- name: AddChangelog :one
+const addPluginChangelog = `-- name: AddPluginChangelog :one
 INSERT INTO plugin_changelogs(plugin_id, version, changelog, update_date, created_at, updated_at)
 VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
 RETURNING id, plugin_id, version, changelog, update_date, created_at, updated_at
 `
 
-type AddChangelogParams struct {
+type AddPluginChangelogParams struct {
 	PluginID   int64
 	Version    string
 	Changelog  string
 	UpdateDate string
 }
 
-func (q *Queries) AddChangelog(ctx context.Context, arg AddChangelogParams) (PluginChangelog, error) {
-	row := q.db.QueryRowContext(ctx, addChangelog,
+func (q *Queries) AddPluginChangelog(ctx context.Context, arg AddPluginChangelogParams) (PluginChangelog, error) {
+	row := q.db.QueryRowContext(ctx, addPluginChangelog,
 		arg.PluginID,
 		arg.Version,
 		arg.Changelog,
