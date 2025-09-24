@@ -30,6 +30,9 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 
 			// changelogs related
 			r.Get("/changelog", s.getPluginChangelog)
+
+			// commands related
+			s.registerPluginCmdRoutes(r)
 		})
 	})
 }

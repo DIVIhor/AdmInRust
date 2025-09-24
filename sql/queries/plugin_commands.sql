@@ -5,7 +5,7 @@ RETURNING *;
 
 -- name: GetPluginCommands :many
 SELECT *
-FROM plugin_changelogs
+FROM plugin_commands
 WHERE plugin_id = (
     SELECT id
     FROM plugins

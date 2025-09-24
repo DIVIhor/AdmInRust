@@ -1,4 +1,4 @@
--- name: AddChangelog :one
+-- name: AddPluginChangelog :one
 INSERT INTO plugin_changelogs(plugin_id, version, changelog, update_date, created_at, updated_at)
 VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
 RETURNING *;

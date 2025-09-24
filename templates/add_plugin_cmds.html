@@ -1,0 +1,32 @@
+{{ define "content" }}
+<h1 class="text-5xl font-bold dark:text-white leading-tight">
+  Add Plugin Commands
+</h1>
+
+<div class="mt-10 flex items-center justify-center">
+  <form class="p-8 rounded-lg shadow-md w-full max-w-[50%] mx-auto" method="POST">
+    <div class="relative mb-5">
+      <label for="commands" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Commands</label>
+      <textarea type="text"
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        name="commands" rows="8" placeholder="Place plugin commands here..."></textarea><!-- Add empty field control -->
+    </div>
+    <div class="relative mb-5">
+      <label for="descr-sep" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description separator</label>
+      <input type="text"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        name="descr-sep" placeholder="-" pattern="^.{0,3}$">
+    </div>
+    <div class="relative mb-7">
+      <label for="cmd-sep" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Command separator</label>
+      <input type="text"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        name="cmd-sep" placeholder="new line" pattern="^.{0,3}$">
+    </div>
+    <button
+      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[100%]">
+      Submit
+    </button>
+  </form>
+</div>
+{{ end }}
