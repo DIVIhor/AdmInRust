@@ -64,7 +64,6 @@ WHERE plugin_id = (
     FROM plugins
     WHERE slug = ?
 )
-ORDER BY update_date DESC, updated_at DESC
 `
 
 func (q *Queries) GetPluginCommands(ctx context.Context, slug string) ([]PluginCommand, error) {

@@ -10,8 +10,7 @@ WHERE plugin_id = (
     SELECT id
     FROM plugins
     WHERE slug = ?
-)
-ORDER BY update_date DESC, updated_at DESC;
+);
 
 -- name: DeletePluginCommand :one
 DELETE

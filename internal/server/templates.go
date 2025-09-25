@@ -27,11 +27,11 @@ func loadTemplates() {
 	baseTemplateName := "base"
 
 	// create a list of base template and its blocks for further filling with specific templates
-	var templatePaths []string
+	var baseTemplatePaths []string
 	// base template must be the first in the list
-	templatePaths = append(templatePaths, makeAbsTemplPath(absTemplateDir, baseTemplateName))
+	baseTemplatePaths = append(baseTemplatePaths, makeAbsTemplPath(absTemplateDir, baseTemplateName))
 	for _, path := range blockNames {
-		templatePaths = makeAbsTemplPaths(filepath.Join(absTemplateDir, templateBlocksDir), path, templatePaths)
+		baseTemplatePaths = makeAbsTemplPaths(filepath.Join(absTemplateDir, templateBlocksDir), path, baseTemplatePaths)
 	}
 
 	// a list of names for specific templates
@@ -44,15 +44,21 @@ func loadTemplates() {
 	// populate the base template with content templates and cache each one
 	for _, name := range templateNames {
 		// get an absolute path for content template
-		tempTemplates := makeAbsTemplPaths(absTemplateDir, name, templatePaths)
+		tempTemplates := makeAbsTemplPaths(absTemplateDir, name, baseTemplatePaths)
 		// parse templates in order base → blocks → content template
 		tmplt := template.Must(template.ParseFiles(tempTemplates...))
 		// cache template to global templates
 		templates[name] = tmplt
 	}
 
-	changelogsPath := makeAbsTemplPath(absTemplateDir, "plugin_changelogs")
-	templates["plugin_changelogs"] = template.Must(template.ParseFiles(changelogsPath))
+	// process templates for inner-page tabs
+	tabTemplateNames := []string{
+		"plugin_changelogs", "plugin_commands",
+	}
+	for _, tabTempl := range tabTemplateNames {
+		absPath := makeAbsTemplPath(absTemplateDir, tabTempl)
+		templates[tabTempl] = template.Must(template.ParseFiles(absPath))
+	}
 }
 
 // Make an absolute path to HTML template

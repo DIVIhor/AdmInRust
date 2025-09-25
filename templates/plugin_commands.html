@@ -1,0 +1,11 @@
+{{ if .Content }}
+<ul>
+  {{ range .Content }}
+  <li class="mb-2">
+    <code class="font-bold text-[#E3A008]">{{ .Command }}</code> - <span>{{ .Description }}</span>
+  </li>
+  {{ end }}
+</ul>
+{{ else }}
+<span class="font-bold">No commands available</span>
+{{ end }}

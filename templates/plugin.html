@@ -38,6 +38,7 @@
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
           id="commands-tab" data-tabs-target="#commands" type="button" role="tab" aria-controls="commands"
+          hx-get="{{ .Content.Slug }}/commands" hx-target="#commands"
           aria-selected="false">
           Commands
         </button>
@@ -123,22 +124,9 @@
       
     </div>
     <div class="hidden p-4 rounded-lg bg-gray-800" id="changelog" role="tabpanel"
-      aria-labelledby="changelog-tab">
-      <!-- <p class="text-sm text-gray-400">This is some placeholder content the
-        <strong class="font-medium text-white">Changelogs tab's associated content</strong>.
-        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes
-        to control the content visibility and styling.
-      </p> -->
-      <!-- new template here -->
-    </div>
+      aria-labelledby="changelog-tab"></div>
     <div class="hidden p-4 rounded-lg bg-gray-800" id="commands" role="tabpanel"
-      aria-labelledby="commands-tab">
-      <p class="text-sm text-gray-400">
-        This is some placeholder content the
-        <strong class="font-medium text-white">Commands tab's associated content</strong>. Clicking another
-        tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
-        visibility and styling.</p>
-    </div>
+      aria-labelledby="commands-tab"></div>
     <div class="hidden p-4 rounded-lg bg-gray-800" id="docs" role="tabpanel"
       aria-labelledby="docs-tab">
       <p class="text-sm text-gray-400">

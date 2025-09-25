@@ -13,9 +13,25 @@ import (
 // Command-related routes
 func (s *Server) registerPluginCmdRoutes(r chi.Router) {
 	r.Route("/commands", func(r chi.Router) {
+		r.Get("/", s.getPluginCommands)
+
 		r.Get("/add", s.addPluginCommandsForm)
 		r.Post("/add", s.addPluginCommands)
 	})
+}
+
+// Retrieve command list
+func (s *Server) getPluginCommands(w http.ResponseWriter, r *http.Request) {
+	pluginSlug := r.PathValue("pluginSlug")
+
+	commands, err := s.db.Queries().GetPluginCommands(r.Context(), pluginSlug)
+	if err != nil {
+		log.Println(err)
+		internalServerErr(w)
+		return
+	}
+
+	renderPage(w, "plugin_commands", "", commands, nil)
 }
 
 // Render a page with plugin commands addition form
