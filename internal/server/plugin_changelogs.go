@@ -3,7 +3,15 @@ package server
 import (
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
+
+func (s *Server) registerPluginChangelogRoutes(r chi.Router) {
+	r.Route("/changelog", func(r chi.Router) {
+		r.Get("/", s.getPluginChangelog)
+	})
+}
 
 // Get plugin version info
 func (s *Server) getPluginChangelog(w http.ResponseWriter, r *http.Request) {
