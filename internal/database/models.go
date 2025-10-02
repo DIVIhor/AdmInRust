@@ -46,7 +46,7 @@ type PluginConfig struct {
 type PluginDoc struct {
 	ID        int64
 	PluginID  int64
-	Docs      string
+	Doc       string
 	CreatedAt string
 	UpdatedAt string
 }
