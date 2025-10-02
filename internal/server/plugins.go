@@ -28,11 +28,14 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 			r.Get("/", s.getPlugin)
 			r.Delete("/", s.deletePlugin)
 
-			// changelogs related
+			// changelogs-related
 			s.registerPluginChangelogRoutes(r)
 
-			// commands related
+			// commands-related
 			s.registerPluginCmdRoutes(r)
+
+			// docs-related
+			s.registerPluginDocRoutes(r)
 		})
 	})
 }

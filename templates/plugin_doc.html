@@ -1,0 +1,8 @@
+<h2 class="mb-5 text-4xl font-bold dark:text-white leading-tight text-center"><small>Docs</small></h2>
+{{ if .Content.Doc }}
+<section>
+  {{ .Content.Doc }}
+</section>
+{{ else }}
+<span class="font-bold">No docs available</span>
+{{ end }}

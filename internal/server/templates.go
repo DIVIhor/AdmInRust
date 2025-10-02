@@ -54,6 +54,7 @@ func loadTemplates() {
 	// process templates for inner-page tabs
 	tabTemplateNames := []string{
 		"plugin_changelogs", "plugin_commands",
+		"plugin_doc",
 	}
 	for _, tabTempl := range tabTemplateNames {
 		absPath := makeAbsTemplPath(absTemplateDir, tabTempl)

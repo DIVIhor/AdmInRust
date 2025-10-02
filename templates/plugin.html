@@ -21,6 +21,7 @@
           Details
         </button>
       </li>
+
       <li class="me-2" role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
@@ -30,6 +31,7 @@
           Changelog
         </button>
       </li>
+
       <li class="me-2" role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
@@ -39,14 +41,17 @@
           Commands
         </button>
       </li>
+
       <li role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
-          id="docs-tab" data-tabs-target="#docs" type="button" role="tab" aria-controls="docs"
+          id="doc-tab" data-tabs-target="#doc" type="button" role="tab" aria-controls="doc"
+          hx-get="{{ .Content.Slug }}/doc" hx-target="#doc"
           aria-selected="false">
           Docs
         </button>
       </li>
+
       <li role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
@@ -55,6 +60,7 @@
           Config
         </button>
       </li>
+
       <li role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
@@ -63,6 +69,7 @@
           Localization
         </button>
       </li>
+
       <li role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
@@ -78,7 +85,6 @@
     <div class="hidden p-4 rounded-lg bg-gray-800" id="details" role="tabpanel"
       aria-labelledby="details-tab">
       <div class="mb-2 flex justify-between">
-        <!-- Plugin info: origin, update status, and URL -->
         <ul>
           <li class="mb-1">
             <span class="dark:text-neutral-400">
@@ -126,20 +132,17 @@
       </div>
       <p class="text-l">{{ .Content.Description }}</p>
       {{ end }}
-      
     </div>
+
     <div class="hidden p-4 rounded-lg bg-gray-800" id="changelog" role="tabpanel"
       aria-labelledby="changelog-tab"></div>
+
     <div class="hidden p-4 rounded-lg bg-gray-800" id="commands" role="tabpanel"
       aria-labelledby="commands-tab"></div>
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="docs" role="tabpanel"
-      aria-labelledby="docs-tab">
-      <p class="text-sm text-gray-400">
-        This is some placeholder content the
-        <strong class="font-medium text-white">Docs tab's associated content</strong>.
-        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
-        visibility and styling.</p>
-    </div>
+
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="doc" role="tabpanel"
+      aria-labelledby="doc-tab"></div>
+
     <div class="hidden p-4 rounded-lg bg-gray-800" id="config" role="tabpanel"
       aria-labelledby="config-tab">
       <p class="text-sm text-gray-400">
@@ -148,6 +151,7 @@
         Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
         visibility and styling.</p>
     </div>
+
     <div class="hidden p-4 rounded-lg bg-gray-800" id="localization" role="tabpanel"
       aria-labelledby="localization-tab">
       <p class="text-sm text-gray-400">
@@ -156,6 +160,7 @@
         Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
         visibility and styling.</p>
     </div>
+
     <div class="hidden p-4 rounded-lg bg-gray-800" id="code-edits" role="tabpanel"
       aria-labelledby="code-edits-tab">
       <p class="text-sm text-gray-400">
