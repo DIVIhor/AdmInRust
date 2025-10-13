@@ -39,6 +39,7 @@ func loadTemplates() {
 		"add_origin", "origin", "origins",
 		"add_plugin", "plugin", "plugins",
 		"add_plugin_cmds",
+		"add_plugin_doc",
 		"http_error",
 	}
 	// populate the base template with content templates and cache each one
