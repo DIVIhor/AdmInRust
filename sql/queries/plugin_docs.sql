@@ -1,6 +1,8 @@
 -- name: AddPluginDoc :one
 INSERT INTO plugin_docs(plugin_id, doc, created_at, updated_at)
-VALUES (?, ?, datetime('now'), datetime('now'))
+SELECT p.id, ?, datetime('now'), datetime('now')
+FROM plugins AS p
+WHERE p.slug = ?
 RETURNING *;
 
 -- name: GetPluginDoc :one
