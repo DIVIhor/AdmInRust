@@ -1,0 +1,27 @@
+{{ if .Content.ConfigJson }}
+<div class="flex mb-5">
+  <h2 class="flex-1 text-4xl font-bold dark:text-white leading-tight text-center"><small>{{ .Title }}</small></h2>
+
+  <div class="flex items-center">
+    <a class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      href="{{ .Meta.EditURL }}">
+      Edit
+    </a>
+    <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+      hx-delete="{{ .Meta.CurrentURL }}" hx-confirm="Are you sure you wish to delete this {{ .Title }}?">
+      Delete
+    </button>
+  </div>
+</div>
+
+<pre><code class="text-l">{{ .Content.ConfigJson }}</code></pre>
+
+{{ else }}
+<div class="flex items-center">
+  <span class="flex-1 font-bold">No {{ .Title }} available</span>
+  <a class="ml-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+    href="{{ .Meta.AddURL }}">
+    Add
+  </a>
+</div>
+{{ end }}

@@ -30,12 +30,12 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 
 			// changelogs-related
 			s.registerPluginChangelogRoutes(r)
-
 			// commands-related
 			s.registerPluginCmdRoutes(r)
-
 			// docs-related
 			s.registerPluginDocRoutes(r)
+			// config-related
+			s.registerPluginCfgRoutes(r)
 		})
 	})
 }
@@ -203,7 +203,7 @@ func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
 	// check if the retrieved form contains hidden PUT method
 	if r.FormValue("_method") != "PUT" {
 		log.Println("post with no PUT input")
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		notAllowed(w, r)
 		return
 	}
 

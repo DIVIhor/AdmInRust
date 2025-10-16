@@ -1,7 +1,7 @@
 -- +goose Up
 CREATE TABLE plugin_configs (
     id INTEGER PRIMARY KEY,
-    plugin_id INTEGER NOT NULL,
+    plugin_id INTEGER UNIQUE NOT NULL,
     config_json TEXT NOT NULL,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,

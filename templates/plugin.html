@@ -56,6 +56,7 @@
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
           id="config-tab" data-tabs-target="#config" type="button" role="tab" aria-controls="config"
+          hx-get="{{ .Content.Slug }}/config" hx-target="#config"
           aria-selected="false">
           Config
         </button>
@@ -144,13 +145,7 @@
       aria-labelledby="doc-tab"></div>
 
     <div class="hidden p-4 rounded-lg bg-gray-800" id="config" role="tabpanel"
-      aria-labelledby="config-tab">
-      <p class="text-sm text-gray-400">
-        This is some placeholder content the
-        <strong class="font-medium text-white">Config tab's associated content</strong>.
-        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
-        visibility and styling.</p>
-    </div>
+      aria-labelledby="config-tab"></div>
 
     <div class="hidden p-4 rounded-lg bg-gray-800" id="localization" role="tabpanel"
       aria-labelledby="localization-tab">
