@@ -61,7 +61,7 @@ func (s *Server) getPlugin(w http.ResponseWriter, r *http.Request) {
 	plugin, err := s.db.Queries().GetPlugin(r.Context(), pluginSlug)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "page not found", http.StatusNotFound)
+		notFound(w, r)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 	isValidName := validateName(name)
 	if !isValidName {
 		log.Println("name error", name)
-		http.Error(w, "Wrong name format", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 
@@ -110,7 +110,7 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 	isValidURL := validatePluginURL(url)
 	if !isValidURL {
 		log.Println("invalid URL:", url)
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 
@@ -118,13 +118,13 @@ func (s *Server) addPlugin(w http.ResponseWriter, r *http.Request) {
 	originIdStr := r.FormValue("origin")
 	if originIdStr == "" {
 		log.Println("empty originID")
-		http.Error(w, "origin ID cannot be empty", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 	originId, err := strconv.Atoi(originIdStr)
 	if err != nil {
 		log.Println("invalid originID:", originIdStr)
-		http.Error(w, "origin ID should be a number", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 
@@ -159,7 +159,7 @@ func (s *Server) updatePluginForm(w http.ResponseWriter, r *http.Request) {
 	pluginWithOrigins, err := s.db.Queries().GetPluginWithOriginsJson(r.Context(), pluginSlug)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "page not found", http.StatusNotFound)
+		notFound(w, r)
 		return
 	}
 
@@ -220,7 +220,7 @@ func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
 	isValidURL := validatePluginURL(url)
 	if !isValidURL {
 		log.Println("invalid URL:", url)
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 
@@ -228,13 +228,13 @@ func (s *Server) updatePlugin(w http.ResponseWriter, r *http.Request) {
 	originIdStr := r.FormValue("origin")
 	if originIdStr == "" {
 		log.Println("empty originID")
-		http.Error(w, "origin ID cannot be empty", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 	originId, err := strconv.Atoi(originIdStr)
 	if err != nil {
 		log.Println("invalid originID:", originIdStr)
-		http.Error(w, "origin ID should be a number", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 

@@ -49,7 +49,7 @@ func (s *Server) getOrigin(w http.ResponseWriter, r *http.Request) {
 	origin, err := s.db.Queries().GetOrigin(r.Context(), originSlug)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "page not found", http.StatusNotFound)
+		notFound(w, r)
 		return
 	}
 
@@ -73,7 +73,7 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	isValidName := validateName(name)
 	if !isValidName {
 		log.Println("name error:", name)
-		http.Error(w, "Wrong name format", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	isValidURL := validateOriginURL(url)
 	if !isValidURL {
 		log.Println("invalid URL:", url)
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 	// cut possible trailing slash
@@ -95,7 +95,7 @@ func (s *Server) addOrigin(w http.ResponseWriter, r *http.Request) {
 	isValidPath := validatePluginsURLPath(pathToPluginList)
 	if !isValidPath {
 		log.Println("invalid path to plugins:", pathToPluginList)
-		http.Error(w, "Invalid path", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 	// cut host prefix if exists
@@ -133,7 +133,7 @@ func (s *Server) updateOriginForm(w http.ResponseWriter, r *http.Request) {
 	origin, err := s.db.Queries().GetOrigin(r.Context(), originSlug)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, "page not found", http.StatusNotFound)
+		notFound(w, r)
 		return
 	}
 
@@ -157,7 +157,7 @@ func (s *Server) updateOrigin(w http.ResponseWriter, r *http.Request) {
 	isValidURL := validateOriginURL(url)
 	if !isValidURL {
 		log.Println("invalid URL:", url)
-		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 	// cut possible trailing slash
@@ -170,7 +170,7 @@ func (s *Server) updateOrigin(w http.ResponseWriter, r *http.Request) {
 	isValidPath := validatePluginsURLPath(pathToPluginList)
 	if !isValidPath {
 		log.Println("invalid path to plugins:", pathToPluginList)
-		http.Error(w, "Invalid path", http.StatusBadRequest)
+		badRequest(w)
 		return
 	}
 	// cut host prefix if exists
