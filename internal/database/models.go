@@ -59,13 +59,13 @@ type PluginImage struct {
 	UpdatedAt string
 }
 
-type PluginLocalization struct {
-	ID               int64
-	PluginID         int64
-	LanguageTag      string
-	LocalizationJson string
-	CreatedAt        string
-	UpdatedAt        string
+type PluginLocale struct {
+	PluginID    int64
+	LangCode    string
+	LangName    string
+	ContentJson string
+	CreatedAt   string
+	UpdatedAt   string
 }
 
 type PluginManualCodeChange struct {

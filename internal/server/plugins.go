@@ -36,6 +36,8 @@ func (s *Server) registerPluginRoutes(r *chi.Mux) {
 			s.registerPluginDocRoutes(r)
 			// config-related
 			s.registerPluginCfgRoutes(r)
+			// locale-related
+			s.registerPluginLocaleRoutes(r)
 		})
 	})
 }

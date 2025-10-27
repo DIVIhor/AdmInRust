@@ -1,0 +1,59 @@
+{{ $currURL := .Meta.CurrentURL }}
+{{ $addURL := .Meta.AddURL }}
+
+<div class="flex justify-between items-center mb-5">
+  <h2 class="text-4xl font-bold dark:text-white text-center"><small>{{ .Title }}</small></h2>
+
+  <div class="flex items-center">
+    <a class="-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      href="{{ $addURL }}">
+      Add
+    </a>
+
+    <button class="ml-1 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      id="toggle-editing">
+      Edit
+    </button>
+  </div>
+</div>
+{{ if .Content }}
+<ul>
+  {{ range .Content }}
+  <li class="mb-3">
+    <details>
+      <summary class="flex justify-between items-center" style="cursor: pointer;">
+        <span class="text-xl font-bold dark:text-white hover-pointer">{{ .LangName }} <small>({{ .LangCode }}) ▼</small></span>
+
+        <div class="flex items-center editing hidden">
+          <a class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            href="{{ $currURL }}/edit/{{ .LangCode }}">
+            Edit
+          </a>
+          <button class="ml-1 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            hx-delete="{{ $currURL }}/{{ .LangCode }}" hx-confirm="Are you sure you wish to delete '{{ .LangCode }}' locale?">
+            Delete
+          </button>
+        </div>
+      </summary>
+      <pre><code class="language-json rounded-lg" lang-code="{{ .LangCode }}">{{ .ContentJson }}</code></pre>
+    </details>
+    <!-- <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"> -->
+  </li>
+  {{ end }}
+</ul>
+
+<script>
+  // Toggle button to show/hide edit and delete buttons
+  document.getElementById('toggle-editing').addEventListener('click', function() {
+    // find all editing elements
+    const buttonGroups = document.querySelectorAll('.editing');
+    // toggle the 'hidden' class for each of them
+    buttonGroups.forEach(group => {
+      group.classList.toggle('hidden');
+    });
+  });
+</script>
+<script>hljs.highlightAll();</script>
+{{ else }}
+<span class="font-bold">No {{ .Title }} Available</span>
+{{ end }}

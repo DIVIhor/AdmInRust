@@ -39,13 +39,9 @@ func slugify(name string) (slug string) {
 func renderPage(w http.ResponseWriter, tmpltName, pageTitle string, pageContent, pageMeta any) {
 	// prepare data for template population
 	page := Page{
-		Title: pageTitle,
-	}
-	if pageContent != nil {
-		page.Content = pageContent
-	}
-	if pageMeta != nil {
-		page.Meta = pageMeta
+		Title:   pageTitle,
+		Content: pageContent,
+		Meta:    pageMeta,
 	}
 
 	// populate and render template or return HTTP 500

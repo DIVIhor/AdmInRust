@@ -85,6 +85,11 @@ func errorHandler(w http.ResponseWriter, httpErrCode int, httpErr string) {
 	}
 }
 
+// HTTP 400 handler
+func badRequest(w http.ResponseWriter) {
+	errorHandler(w, http.StatusBadRequest, "Bad request")
+}
+
 // HTTP 404 handler
 func notFound(w http.ResponseWriter, r *http.Request) {
 	errorHandler(w, http.StatusNotFound, "Page not found")
