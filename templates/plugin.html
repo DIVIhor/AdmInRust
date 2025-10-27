@@ -3,7 +3,8 @@
   <h1 class="text-5xl font-bold dark:text-white leading-tight">{{ .Title }}</h1>
 
   <div class="flex items-center">
-    <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+    <button
+      class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
       hx-delete="/plugins/{{ .Content.Slug }}" hx-confirm="Are you sure you wish to delete this plugin?">
       Delete
     </button>
@@ -26,8 +27,7 @@
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
           id="changelog-tab" data-tabs-target="#changelog" type="button" role="tab" aria-controls="changelog"
-          hx-get="{{ .Content.Slug }}/changelog" hx-target="#changelog"
-          aria-selected="false">
+          hx-get="{{ .Content.Slug }}/changelog" hx-target="#changelog" aria-selected="false">
           Changelog
         </button>
       </li>
@@ -36,8 +36,7 @@
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
           id="commands-tab" data-tabs-target="#commands" type="button" role="tab" aria-controls="commands"
-          hx-get="{{ .Content.Slug }}/commands" hx-target="#commands"
-          aria-selected="false">
+          hx-get="{{ .Content.Slug }}/commands" hx-target="#commands" aria-selected="false">
           Commands
         </button>
       </li>
@@ -46,8 +45,7 @@
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
           id="doc-tab" data-tabs-target="#doc" type="button" role="tab" aria-controls="doc"
-          hx-get="{{ .Content.Slug }}/doc" hx-target="#doc"
-          aria-selected="false">
+          hx-get="{{ .Content.Slug }}/doc" hx-target="#doc" aria-selected="false">
           Docs
         </button>
       </li>
@@ -56,8 +54,7 @@
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
           id="config-tab" data-tabs-target="#config" type="button" role="tab" aria-controls="config"
-          hx-get="{{ .Content.Slug }}/config" hx-target="#config"
-          aria-selected="false">
+          hx-get="{{ .Content.Slug }}/config" hx-target="#config" aria-selected="false">
           Config
         </button>
       </li>
@@ -65,9 +62,9 @@
       <li role="presentation">
         <button
           class="inline-block p-4 border-b-2 border-transparent text-gray-400 rounded-t-lg hover:border-gray-300 hover:text-gray-300"
-          id="localization-tab" data-tabs-target="#localization" type="button" role="tab" aria-controls="localization"
-          aria-selected="false">
-          Localization
+          id="locale-tab" data-tabs-target="#locales" type="button" role="tab" aria-controls="locales"
+          hx-get="{{ .Content.Slug }}/loc" hx-target="#locales" aria-selected="false">
+          Locales
         </button>
       </li>
 
@@ -83,8 +80,7 @@
   </div>
 
   <div id="default-tab-content">
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="details" role="tabpanel"
-      aria-labelledby="details-tab">
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="details" role="tabpanel" aria-labelledby="details-tab">
       <div class="mb-2 flex justify-between">
         <ul>
           <li class="mb-1">
@@ -92,19 +88,19 @@
               Origin: <strong class="font-medium text-white">{{ .Content.OriginID }}</strong>
             </span>
           </li>
+
           <li class="mb-1">
             <label class="flex flex-row items-center gap-2.5 dark:text-white light:text-black">
               <span class="dark:text-neutral-400">Is Updated:</span>
               <input type="checkbox"
                 class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
                 name="isUpdatedOnServer" value="yes"
-                {{ with .Content }}{{ if .IsUpdatedOnServer }}checked{{ end }}{{ end }}
-                disabled>
+                {{ with .Content }}{{ if .IsUpdatedOnServer }}checked{{ end }}{{ end }} disabled>
             </label>
           </li>
+
           <li class="mb-1">
-            <a href="{{ .Content.Url }}"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            <a href="{{ .Content.Url }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
               Webpage
             </a>
           </li>
@@ -112,8 +108,10 @@
 
         <ul>
           <li class="mb-1">
-            <span class="mb-1 italic text-neutral-500 dark:text-neutral-400">Last update: {{ .Content.UpdatedAt }}</span>
+            <span class="mb-1 italic text-neutral-500 dark:text-neutral-400">Last update:
+              {{ .Content.UpdatedAt }}</span>
           </li>
+
           <li class="mb-1">
             <span class="italic text-neutral-500 dark:text-neutral-400">Added at: {{ .Content.CreatedAt }}</span>
           </li>
@@ -135,33 +133,23 @@
       {{ end }}
     </div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="changelog" role="tabpanel"
-      aria-labelledby="changelog-tab"></div>
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="changelog" role="tabpanel" aria-labelledby="changelog-tab"></div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="commands" role="tabpanel"
-      aria-labelledby="commands-tab"></div>
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="commands" role="tabpanel" aria-labelledby="commands-tab"></div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="doc" role="tabpanel"
-      aria-labelledby="doc-tab"></div>
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="doc" role="tabpanel" aria-labelledby="doc-tab"></div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="config" role="tabpanel"
-      aria-labelledby="config-tab"></div>
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="config" role="tabpanel" aria-labelledby="config-tab"></div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="localization" role="tabpanel"
-      aria-labelledby="localization-tab">
-      <p class="text-sm text-gray-400">
-        This is some placeholder content the
-        <strong class="font-medium text-white">Localization tab's associated content</strong>.
-        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
-        visibility and styling.</p>
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="locales" role="tabpanel" aria-labelledby="locale-tab">
     </div>
 
-    <div class="hidden p-4 rounded-lg bg-gray-800" id="code-edits" role="tabpanel"
-      aria-labelledby="code-edits-tab">
+    <div class="hidden p-4 rounded-lg bg-gray-800" id="code-edits" role="tabpanel" aria-labelledby="code-edits-tab">
       <p class="text-sm text-gray-400">
         This is some placeholder content the
         <strong class="font-medium text-white">Code Edits tab's associated content</strong>.
-        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content
+        Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to
+        control the content
         visibility and styling.</p>
     </div>
   </div>

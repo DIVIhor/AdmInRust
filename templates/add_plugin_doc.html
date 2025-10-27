@@ -1,6 +1,6 @@
 {{ define "content" }}
 <h1 class="text-5xl font-bold dark:text-white leading-tight">
-  {{ if .Content }}Edit{{ else }}Add{{ end }} Plugin Documentation
+  {{ .Title }}
 </h1>
 
 <div class="mt-10 flex items-center justify-center">
@@ -10,7 +10,7 @@
       <label for="doc" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Documentation <small>HTML</small></label>
       <textarea type="text"
         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        name="doc" rows="16" placeholder="Place plugin cocumentation here..." required>{{ if .Content }}{{ .Content.Doc }}{{ end }}</textarea>
+        name="doc" rows="16" placeholder="Place plugin documentation here..." required>{{ if .Content }}{{ .Content.Doc }}{{ end }}</textarea>
     </div>
 
     <button
